@@ -108,7 +108,7 @@ jobs:
         run: |
           echo "Schritt Smoke Tests ist erreicht"
 
-          if [ -f package.json ] && ( [ "$(npm pkg get \"scripts.test:smoke\")" != "null" ] || [ "$(npm pkg get scripts.smoke)" != "null" ] ); then
+          if [ -f package.json ] && ( [ "$(npm pkg get 'scripts.test:smoke')" != "null" ] || [ "$(npm pkg get scripts.smoke)" != "null" ] ); then
             echo "::group::Install Playwright browsers"
             if grep -q "\"@playwright/test\"" package.json; then
               npx playwright install --with-deps
@@ -118,7 +118,7 @@ jobs:
             echo "::endgroup::"
 
             echo "::group::Run Playwright smoke tests"
-            if [ "$(npm pkg get \"scripts.test:smoke\")" != "null" ]; then
+            if [ "$(npm pkg get 'scripts.test:smoke')" != "null" ]; then
               npm run test:smoke
             else
               npm run smoke
