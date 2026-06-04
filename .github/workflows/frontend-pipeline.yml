@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          #cache: 'npm'
 
       - name: 03b - Install dependencies
         run: |
