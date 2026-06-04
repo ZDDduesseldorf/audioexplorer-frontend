@@ -118,7 +118,7 @@ jobs:
             echo "::endgroup::"
 
             echo "::group::Run Playwright smoke tests"
-            if [ "$(npm pkg get \"scripts.test:smoke\")" != "null" ]; then
+            if [ "$(npm pkg get 'scripts.test:smoke')" != "null" ]; then
               npm run test:smoke
             else
               npm run smoke
