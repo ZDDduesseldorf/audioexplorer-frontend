@@ -33,13 +33,13 @@ jobs:
         if: ${{ hashFiles('**/package-lock.json') == '' }}
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: 03 - Set up Node.js (npm cache)
         if: ${{ hashFiles('**/package-lock.json') != '' }}
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
           #cache: 'npm'
 
       - name: 03b - Install dependencies
