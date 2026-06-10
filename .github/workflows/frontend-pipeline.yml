@@ -29,7 +29,14 @@ jobs:
       - name: 02 - Branch Protection
         run: echo "Schritt Branch Protection ist erreicht"
 
-      - name: 03 - Set up Node.js
+      - name: 03 - Set up Node.js (no cache)
+        if: ${{ hashFiles('**/package-lock.json') == '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 03 - Set up Node.js (npm cache)
+        if: ${{ hashFiles('**/package-lock.json') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: '22'
