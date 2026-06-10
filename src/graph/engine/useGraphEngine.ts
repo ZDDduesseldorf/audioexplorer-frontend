@@ -82,13 +82,6 @@ export function useGraphEngine(
 
     const adapter = new SigmaEngineAdapter(sigma);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const on = (event: string, handler: (...args: any[]) => void) =>
-      sigma.on(event as any, handler);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const off = (event: string, handler: (...args: any[]) => void) =>
-      sigma.removeListener(event as any, handler);
-
     const handleEnterNode = ({
       node,
       event,
@@ -114,18 +107,18 @@ export function useGraphEngine(
       onStageClickRef.current?.();
     };
 
-    on("enterNode", handleEnterNode);
-    on("leaveNode", handleLeaveNode);
-    on("clickNode", handleClickNode);
-    on("clickStage", handleClickStage);
+    sigma.on("enterNode", handleEnterNode);
+    sigma.on("leaveNode", handleLeaveNode);
+    sigma.on("clickNode", handleClickNode);
+    sigma.on("clickStage", handleClickStage);
 
     setEngine(adapter);
 
     return () => {
-      off("enterNode", handleEnterNode);
-      off("leaveNode", handleLeaveNode);
-      off("clickNode", handleClickNode);
-      off("clickStage", handleClickStage);
+      sigma.removeListener("enterNode", handleEnterNode);
+      sigma.removeListener("leaveNode", handleLeaveNode);
+      sigma.removeListener("clickNode", handleClickNode);
+      sigma.removeListener("clickStage", handleClickStage);
       adapter.destroy();
       setEngine(null);
     };
