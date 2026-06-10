@@ -1,7 +1,11 @@
-import type { PointData } from './types';
+import type { PointData } from "./types";
 
-export function knnSearch(points: PointData[], sourceId: string, k: number): string[] {
-  const src = points.find(p => p.id === sourceId);
+export function knnSearch(
+  points: PointData[],
+  sourceId: string,
+  k: number,
+): string[] {
+  const src = points.find((p) => p.id === sourceId);
   if (!src) return [];
 
   const top: Array<{ id: string; d2: number }> = [];
@@ -18,5 +22,5 @@ export function knnSearch(points: PointData[], sourceId: string, k: number): str
       }
     }
   }
-  return top.map(t => t.id);
+  return top.map((t) => t.id);
 }

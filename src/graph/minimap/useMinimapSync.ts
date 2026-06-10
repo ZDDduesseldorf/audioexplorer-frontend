@@ -1,20 +1,28 @@
-import { useEffect, useRef } from 'react';
-import type { PointData } from '../../domain/types';
-import { getClusterColor } from '../../domain/clusters';
-import type { GraphEngine } from '../engine/GraphEngine';
+import { useEffect, useRef } from "react";
+import type { PointData } from "../../domain/types";
+import { getClusterColor } from "../../domain/clusters";
+import type { GraphEngine } from "../engine/GraphEngine";
 
 const MINIMAP_MAX_SIDE = 180;
 const MINIMAP_PAD = 8;
 
 interface MinimapGeometry {
-  minX: number; maxX: number; minY: number; maxY: number;
-  bboxW: number; bboxH: number;
-  mmW: number; mmH: number;
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+  bboxW: number;
+  bboxH: number;
+  mmW: number;
+  mmH: number;
   scale: number;
 }
 
 function computeGeometry(points: PointData[]): MinimapGeometry {
-  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
   for (const p of points) {
     if (p.x < minX) minX = p.x;
     if (p.x > maxX) maxX = p.x;
@@ -24,13 +32,23 @@ function computeGeometry(points: PointData[]): MinimapGeometry {
   const bboxW = maxX - minX || 1;
   const bboxH = maxY - minY || 1;
   const scale = Math.min(MINIMAP_MAX_SIDE / bboxW, MINIMAP_MAX_SIDE / bboxH);
-  return { minX, maxX, minY, maxY, bboxW, bboxH, mmW: Math.round(bboxW * scale), mmH: Math.round(bboxH * scale), scale };
+  return {
+    minX,
+    maxX,
+    minY,
+    maxY,
+    bboxW,
+    bboxH,
+    mmW: Math.round(bboxW * scale),
+    mmH: Math.round(bboxH * scale),
+    scale,
+  };
 }
 
 export function useMinimapSync(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   engine: GraphEngine | null,
-  points: PointData[]
+  points: PointData[],
 ) {
   const geoRef = useRef<MinimapGeometry | null>(null);
   const offscreenRef = useRef<HTMLCanvasElement | null>(null);
@@ -46,16 +64,19 @@ export function useMinimapSync(
     canvasRef.current.width = mmW + MINIMAP_PAD * 2;
     canvasRef.current.height = mmH + MINIMAP_PAD * 2;
 
-    const dotRadius = Math.max(0.4, Math.min(1.5, 55 / Math.sqrt(points.length)));
-    const offscreen = document.createElement('canvas');
+    const dotRadius = Math.max(
+      0.4,
+      Math.min(1.5, 55 / Math.sqrt(points.length)),
+    );
+    const offscreen = document.createElement("canvas");
     offscreen.width = mmW;
     offscreen.height = mmH;
     offscreenRef.current = offscreen;
-    const octx = offscreen.getContext('2d')!;
+    const octx = offscreen.getContext("2d")!;
 
     const gToM = (gx: number, gy: number) => ({
-      x: (gx - minX) / bboxW * mmW,
-      y: (maxY - gy) / bboxH * mmH,
+      x: ((gx - minX) / bboxW) * mmW,
+      y: ((maxY - gy) / bboxH) * mmH,
     });
 
     for (const p of points) {
@@ -78,12 +99,12 @@ export function useMinimapSync(
       if (!canvas || !geo || !offscreen) return;
 
       const { minX, maxY, bboxW, bboxH, mmW, mmH } = geo;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
       const gToM = (gx: number, gy: number) => ({
-        x: (gx - minX) / bboxW * mmW,
-        y: (maxY - gy) / bboxH * mmH,
+        x: ((gx - minX) / bboxW) * mmW,
+        y: ((maxY - gy) / bboxH) * mmH,
       });
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -103,17 +124,17 @@ export function useMinimapSync(
       if (rw > 0 && rh > 0) {
         const cx = rxMin + MINIMAP_PAD;
         const cy = ryMin + MINIMAP_PAD;
-        ctx.fillStyle = 'rgba(255,132,0,0.1)';
+        ctx.fillStyle = "rgba(255,132,0,0.1)";
         ctx.fillRect(cx, cy, rw, rh);
-        ctx.strokeStyle = '#FF8400';
+        ctx.strokeStyle = "#FF8400";
         ctx.lineWidth = 1.5;
         ctx.strokeRect(cx, cy, rw, rh);
       }
     };
 
-    engine.on('afterRender', draw);
+    engine.on("afterRender", draw);
     draw();
-    return () => engine.off('afterRender', draw);
+    return () => engine.off("afterRender", draw);
   }, [canvasRef, engine]);
 
   // Click on minimap → pan camera
@@ -134,7 +155,7 @@ export function useMinimapSync(
       engine.panTo(gx, gy);
     };
 
-    canvas.addEventListener('click', handleClick);
-    return () => canvas.removeEventListener('click', handleClick);
+    canvas.addEventListener("click", handleClick);
+    return () => canvas.removeEventListener("click", handleClick);
   }, [canvasRef, engine]);
 }

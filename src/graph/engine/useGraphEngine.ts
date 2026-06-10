@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
-import Graph from 'graphology';
-import Sigma from 'sigma';
-import type { PointData } from '../../domain/types';
-import { getClusterColor } from '../../domain/clusters';
-import type { GraphEngine } from './GraphEngine';
-import { SigmaEngineAdapter } from './SigmaEngineAdapter';
+import { useEffect, useRef, useState } from "react";
+import Graph from "graphology";
+import Sigma from "sigma";
+import type { PointData } from "../../domain/types";
+import { getClusterColor } from "../../domain/clusters";
+import type { GraphEngine } from "./GraphEngine";
+import { SigmaEngineAdapter } from "./SigmaEngineAdapter";
 
 interface GraphEngineCallbacks {
   onNodeClick?: (node: PointData) => void;
   onStageClick?: () => void;
-  onHoverChange?: (nodeId: string | null, position: { x: number; y: number } | null) => void;
+  onHoverChange?: (
+    nodeId: string | null,
+    position: { x: number; y: number } | null,
+  ) => void;
 }
 
 const SELECTED_MULTIPLIER = 2.5;
@@ -19,7 +22,7 @@ export function useGraphEngine(
   points: PointData[],
   nodeSize: number,
   selectedId: string | null,
-  callbacks: GraphEngineCallbacks
+  callbacks: GraphEngineCallbacks,
 ): GraphEngine | null {
   const [engine, setEngine] = useState<GraphEngine | null>(null);
 
@@ -31,9 +34,15 @@ export function useGraphEngine(
   const onStageClickRef = useRef(callbacks.onStageClick);
   const onHoverChangeRef = useRef(callbacks.onHoverChange);
 
-  useEffect(() => { onNodeClickRef.current = callbacks.onNodeClick; }, [callbacks.onNodeClick]);
-  useEffect(() => { onStageClickRef.current = callbacks.onStageClick; }, [callbacks.onStageClick]);
-  useEffect(() => { onHoverChangeRef.current = callbacks.onHoverChange; }, [callbacks.onHoverChange]);
+  useEffect(() => {
+    onNodeClickRef.current = callbacks.onNodeClick;
+  }, [callbacks.onNodeClick]);
+  useEffect(() => {
+    onStageClickRef.current = callbacks.onStageClick;
+  }, [callbacks.onStageClick]);
+  useEffect(() => {
+    onHoverChangeRef.current = callbacks.onHoverChange;
+  }, [callbacks.onHoverChange]);
 
   // Build graph + Sigma once when points arrive
   useEffect(() => {
@@ -51,8 +60,8 @@ export function useGraphEngine(
 
     const sigma = new Sigma(graph, containerRef.current, {
       renderLabels: false,
-      defaultNodeType: 'circle',
-      defaultEdgeType: 'line',
+      defaultNodeType: "circle",
+      defaultEdgeType: "line",
       hideEdgesOnMove: true,
       enableEdgeEvents: false,
       zoomingRatio: 1.5,
@@ -61,7 +70,11 @@ export function useGraphEngine(
       nodeReducer: (node, data) => {
         const size = nodeSizeRef.current;
         if (node === selectedIdRef.current) {
-          return { ...data, size: size * SELECTED_MULTIPLIER, color: '#FF8400' };
+          return {
+            ...data,
+            size: size * SELECTED_MULTIPLIER,
+            color: "#FF8400",
+          };
         }
         return { ...data, size };
       },
@@ -70,22 +83,30 @@ export function useGraphEngine(
     const adapter = new SigmaEngineAdapter(sigma);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const on = (event: string, handler: (...args: any[]) => void) => sigma.on(event as any, handler);
+    const on = (event: string, handler: (...args: any[]) => void) =>
+      sigma.on(event as any, handler);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const off = (event: string, handler: (...args: any[]) => void) => sigma.removeListener(event as any, handler);
+    const off = (event: string, handler: (...args: any[]) => void) =>
+      sigma.removeListener(event as any, handler);
 
-    const handleEnterNode = ({ node, event }: { node: string; event: { x: number; y: number; original: MouseEvent | TouchEvent } }) => {
+    const handleEnterNode = ({
+      node,
+      event,
+    }: {
+      node: string;
+      event: { x: number; y: number; original: MouseEvent | TouchEvent };
+    }) => {
       onHoverChangeRef.current?.(node, { x: event.x, y: event.y });
-      sigma.getContainer().style.cursor = 'pointer';
+      sigma.getContainer().style.cursor = "pointer";
     };
 
     const handleLeaveNode = () => {
       onHoverChangeRef.current?.(null, null);
-      sigma.getContainer().style.cursor = 'default';
+      sigma.getContainer().style.cursor = "default";
     };
 
     const handleClickNode = ({ node }: { node: string }) => {
-      const point = points.find(p => p.id === node);
+      const point = points.find((p) => p.id === node);
       if (point) onNodeClickRef.current?.(point);
     };
 
@@ -93,18 +114,18 @@ export function useGraphEngine(
       onStageClickRef.current?.();
     };
 
-    on('enterNode', handleEnterNode);
-    on('leaveNode', handleLeaveNode);
-    on('clickNode', handleClickNode);
-    on('clickStage', handleClickStage);
+    on("enterNode", handleEnterNode);
+    on("leaveNode", handleLeaveNode);
+    on("clickNode", handleClickNode);
+    on("clickStage", handleClickStage);
 
     setEngine(adapter);
 
     return () => {
-      off('enterNode', handleEnterNode);
-      off('leaveNode', handleLeaveNode);
-      off('clickNode', handleClickNode);
-      off('clickStage', handleClickStage);
+      off("enterNode", handleEnterNode);
+      off("leaveNode", handleLeaveNode);
+      off("clickNode", handleClickNode);
+      off("clickStage", handleClickStage);
       adapter.destroy();
       setEngine(null);
     };

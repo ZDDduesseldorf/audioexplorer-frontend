@@ -1,5 +1,5 @@
-import type { PointData } from '../../domain/types';
-import { getClusterColor } from '../../domain/clusters';
+import type { PointData } from "../../domain/types";
+import { getClusterColor } from "../../domain/clusters";
 
 interface NodeDetailsProps {
   node: PointData | null;
@@ -15,7 +15,11 @@ export function NodeDetails({ node, onClose }: NodeDetailsProps) {
     <div className="sidebar">
       <div className="sidebar-header">
         <h2>Point Details</h2>
-        <button className="close-btn" onClick={onClose} aria-label="Close sidebar">
+        <button
+          className="close-btn"
+          onClick={onClose}
+          aria-label="Close sidebar"
+        >
           ✕
         </button>
       </div>
@@ -39,7 +43,10 @@ export function NodeDetails({ node, onClose }: NodeDetailsProps) {
         </div>
         <div className="detail-row">
           <span className="detail-label">Cluster</span>
-          <span className="detail-value cluster-badge" style={{ backgroundColor: clusterColor }}>
+          <span
+            className="detail-value cluster-badge"
+            style={{ backgroundColor: clusterColor }}
+          >
             {node.cluster}
           </span>
         </div>

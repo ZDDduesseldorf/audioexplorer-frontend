@@ -33,13 +33,13 @@ jobs:
         if: ${{ hashFiles('**/package-lock.json') == '' }}
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: 03 - Set up Node.js (npm cache)
         if: ${{ hashFiles('**/package-lock.json') != '' }}
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
           #cache: 'npm'
 
       - name: 03b - Install dependencies
@@ -66,7 +66,7 @@ jobs:
       - name: 05 - Linting
         run: |
           echo "Schritt Linting ist erreicht"
-          
+
           echo "::group::Run ESLint"
           if [ -f package.json ] && [ "$(npm pkg get scripts.lint)" != "null" ]; then
             npm run lint
@@ -148,7 +148,7 @@ jobs:
           fi
 
       #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
-      
+
       - name: 10 - Staging
         run: echo "Schritt Staging ist erreicht"
 

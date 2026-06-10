@@ -1,11 +1,18 @@
-import Sigma from 'sigma';
-import type { GraphEngine, Vec2, ViewportBounds, GraphEventHandler } from './GraphEngine';
+import Sigma from "sigma";
+import type {
+  GraphEngine,
+  Vec2,
+  ViewportBounds,
+  GraphEventHandler,
+} from "./GraphEngine";
 
 export class SigmaEngineAdapter implements GraphEngine {
   constructor(private sigma: Sigma) {}
 
   panTo(x: number, y: number, duration = 250): void {
-    const framed = this.sigma.viewportToFramedGraph(this.sigma.graphToViewport({ x, y }));
+    const framed = this.sigma.viewportToFramedGraph(
+      this.sigma.graphToViewport({ x, y }),
+    );
     this.sigma.getCamera().animate({ x: framed.x, y: framed.y }, { duration });
   }
 
@@ -37,12 +44,18 @@ export class SigmaEngineAdapter implements GraphEngine {
     this.sigma.refresh();
   }
 
-  on<E extends GraphEventHandler>(event: E['event'], handler: E['handler']): void {
+  on<E extends GraphEventHandler>(
+    event: E["event"],
+    handler: E["handler"],
+  ): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.sigma.on(event as any, handler as any);
   }
 
-  off<E extends GraphEventHandler>(event: E['event'], handler: E['handler']): void {
+  off<E extends GraphEventHandler>(
+    event: E["event"],
+    handler: E["handler"],
+  ): void {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.sigma.removeListener(event as any, handler as any);
   }

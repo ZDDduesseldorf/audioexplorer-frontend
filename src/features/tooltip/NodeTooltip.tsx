@@ -1,4 +1,4 @@
-import type { PointData } from '../../domain/types';
+import type { PointData } from "../../domain/types";
 
 interface NodeTooltipProps {
   hoveredId: string | null;
@@ -9,7 +9,7 @@ interface NodeTooltipProps {
 export function NodeTooltip({ hoveredId, position, points }: NodeTooltipProps) {
   if (!hoveredId || !position) return null;
 
-  const point = points.find(p => p.id === hoveredId);
+  const point = points.find((p) => p.id === hoveredId);
   if (!point) return null;
 
   return (

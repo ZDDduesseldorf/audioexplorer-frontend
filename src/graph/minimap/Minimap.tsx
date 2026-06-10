@@ -1,7 +1,7 @@
-import { useRef } from 'react';
-import type { PointData } from '../../domain/types';
-import type { GraphEngine } from '../engine/GraphEngine';
-import { useMinimapSync } from './useMinimapSync';
+import { useRef } from "react";
+import type { PointData } from "../../domain/types";
+import type { GraphEngine } from "../engine/GraphEngine";
+import { useMinimapSync } from "./useMinimapSync";
 
 interface MinimapProps {
   engine: GraphEngine | null;

@@ -4,7 +4,7 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: #0B0829;
+  background: #0b0829;
 }
 
 .canvas-area {
@@ -30,20 +30,24 @@
   display: flex;
   align-items: baseline;
   gap: 14px;
-  background: linear-gradient(to bottom, rgba(11, 8, 41, 0.92) 0%, transparent 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(11, 8, 41, 0.92) 0%,
+    transparent 100%
+  );
   pointer-events: none;
 }
 
 .app-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #F9DFC6;
+  color: #f9dfc6;
   letter-spacing: 0.02em;
 }
 
 .point-count {
   font-size: 0.78rem;
-  color: #8FA0D8;
+  color: #8fa0d8;
   letter-spacing: 0.03em;
 }
 
@@ -65,7 +69,7 @@
 
 .size-label {
   font-size: 0.73rem;
-  color: #8FA0D8;
+  color: #8fa0d8;
   letter-spacing: 0.04em;
   user-select: none;
 }
@@ -86,25 +90,25 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #FF8400;
+  background: #ff8400;
   cursor: pointer;
-  border: 2px solid #F9DFC6;
+  border: 2px solid #f9dfc6;
 }
 
 .size-slider::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #FF8400;
+  background: #ff8400;
   cursor: pointer;
-  border: 2px solid #F9DFC6;
+  border: 2px solid #f9dfc6;
   box-sizing: border-box;
 }
 
 .size-value {
   font-size: 0.73rem;
-  color: #F9DFC6;
-  font-family: 'Courier New', monospace;
+  color: #f9dfc6;
+  font-family: "Courier New", monospace;
   min-width: 28px;
   text-align: right;
 }
@@ -138,21 +142,21 @@
 .tooltip-label {
   font-size: 12px;
   font-weight: 600;
-  color: #F9DFC6;
+  color: #f9dfc6;
   margin-bottom: 2px;
 }
 
 .tooltip-coords {
   font-size: 11px;
-  color: #8FA0D8;
-  font-family: 'Courier New', monospace;
+  color: #8fa0d8;
+  font-family: "Courier New", monospace;
 }
 
 /* ── Sidebar ─────────────────────────────────────────────── */
 .sidebar {
   width: 300px;
   flex-shrink: 0;
-  background: #0B0829;
+  background: #0b0829;
   border-left: 1px solid rgba(143, 160, 216, 0.14);
   display: flex;
   flex-direction: column;
@@ -173,7 +177,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 600;
-  color: #F9DFC6;
+  color: #f9dfc6;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -181,17 +185,19 @@
 .close-btn {
   background: transparent;
   border: none;
-  color: #8FA0D8;
+  color: #8fa0d8;
   font-size: 16px;
   cursor: pointer;
   padding: 2px 6px;
   border-radius: 4px;
   line-height: 1;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 
 .close-btn:hover {
-  color: #F9DFC6;
+  color: #f9dfc6;
   background: rgba(255, 132, 0, 0.18);
 }
 
@@ -209,7 +215,7 @@
   margin: 0 0 12px 0;
   font-size: 11px;
   font-weight: 600;
-  color: #8FA0D8;
+  color: #8fa0d8;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -229,13 +235,13 @@
 
 .detail-label {
   font-size: 12px;
-  color: #8FA0D8;
+  color: #8fa0d8;
   flex-shrink: 0;
 }
 
 .detail-value {
   font-size: 13px;
-  color: #F9DFC6;
+  color: #f9dfc6;
   font-weight: 500;
   text-align: right;
   word-break: break-all;
@@ -247,7 +253,7 @@
   border-radius: 10px;
   font-size: 12px;
   font-weight: 700;
-  color: #0B0829;
+  color: #0b0829;
   min-width: 24px;
   text-align: center;
 }

@@ -1,19 +1,25 @@
-import { useState, useCallback, useMemo, ChangeEvent } from 'react';
-import { GraphView } from './components/GraphView';
-import { NodeDetails } from './features/node-details/NodeDetails';
-import { useAudioData } from './hooks/useAudioData';
-import type { PointData } from './domain/types';
-import './App.css';
+import { useState, useCallback, useMemo, ChangeEvent } from "react";
+import { GraphView } from "./components/GraphView";
+import { NodeDetails } from "./features/node-details/NodeDetails";
+import { useAudioData } from "./hooks/useAudioData";
+import type { PointData } from "./domain/types";
+import "./App.css";
 
 export default function App() {
-  const { data: points, loading, error } = useAudioData('data-5k');
+  const { data: points, loading, error } = useAudioData("data-5k");
 
   const [selectedNode, setSelectedNode] = useState<PointData | null>(null);
   const [nodeSize, setNodeSize] = useState(2);
 
-  const clusterCount = useMemo(() => new Set(points.map(p => p.cluster)).size, [points]);
+  const clusterCount = useMemo(
+    () => new Set(points.map((p) => p.cluster)).size,
+    [points],
+  );
 
-  const handleNodeClick = useCallback((node: PointData) => setSelectedNode(node), []);
+  const handleNodeClick = useCallback(
+    (node: PointData) => setSelectedNode(node),
+    [],
+  );
   const handleStageClick = useCallback(() => setSelectedNode(null), []);
 
   return (
@@ -23,10 +29,15 @@ export default function App() {
           <h1 className="app-title">Audio Explorer</h1>
           {!loading && (
             <span className="point-count">
-              {points.length.toLocaleString()} sounds &middot; {clusterCount} clusters
+              {points.length.toLocaleString()} sounds &middot; {clusterCount}{" "}
+              clusters
             </span>
           )}
-          {error && <span className="point-count" style={{ color: '#e74c3c' }}>{error.message}</span>}
+          {error && (
+            <span className="point-count" style={{ color: "#e74c3c" }}>
+              {error.message}
+            </span>
+          )}
         </div>
 
         <GraphView
@@ -45,7 +56,9 @@ export default function App() {
             max="3"
             step="0.1"
             value={nodeSize}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setNodeSize(parseFloat(e.target.value))}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setNodeSize(parseFloat(e.target.value))
+            }
             className="size-slider"
           />
           <span className="size-value">{nodeSize.toFixed(1)}</span>
@@ -53,7 +66,10 @@ export default function App() {
       </div>
 
       {selectedNode && (
-        <NodeDetails node={selectedNode} onClose={() => setSelectedNode(null)} />
+        <NodeDetails
+          node={selectedNode}
+          onClose={() => setSelectedNode(null)}
+        />
       )}
     </div>
   );
