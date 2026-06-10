@@ -10,7 +10,7 @@
     "typecheck": "tsc -b",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "test": "vitest run",
+    "test": "vitest run tests",
     "preview": "vite preview",
     "test:smoke": "playwright test --config=playwright.config.ts"
   },
