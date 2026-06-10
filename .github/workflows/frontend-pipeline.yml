@@ -115,24 +115,21 @@ jobs:
         run: |
           echo "Schritt Smoke Tests ist erreicht"
 
-          if [ -f package.json ] && ( [ "$(npm pkg get 'scripts.test:smoke')" != "null" ] || [ "$(npm pkg get scripts.smoke)" != "null" ] ); then
+          if [ ! -f package.json ]; then
+            echo "Kein package.json vorhanden"
+            exit 0
+          fi
+
+          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['test:smoke'] ? 0 : 1)"; then
             echo "::group::Install Playwright browsers"
-            if grep -q "\"@playwright/test\"" package.json; then
-              npx playwright install --with-deps
-            else
-              echo "Playwright ist nicht in package.json definiert"
-            fi
+            npx playwright install --with-deps
             echo "::endgroup::"
 
             echo "::group::Run Playwright smoke tests"
-            if [ "$(npm pkg get 'scripts.test:smoke')" != "null" ]; then
-              npm run test:smoke
-            else
-              npm run smoke
-            fi
+            npm run test:smoke
             echo "::endgroup::"
           else
-            echo "Kein Smoke-Test-Script oder package.json vorhanden"
+            echo "Kein Smoke-Test-Script vorhanden"
           fi
 
       - name: 12 - Security Scan
