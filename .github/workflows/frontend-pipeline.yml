@@ -147,6 +147,8 @@ jobs:
             echo "Kein package.json vorhanden"
           fi
 
+      #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
+      
       - name: 10 - Staging
         run: echo "Schritt Staging ist erreicht"
 
