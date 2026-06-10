@@ -115,24 +115,27 @@ jobs:
         run: |
           echo "Schritt Smoke Tests ist erreicht"
 
-          if [ ! -f package.json ]; then
-            echo "Kein package.json vorhanden"
-            exit 0
-          fi
-
-          if node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts['test:smoke'] ? 0 : 1)"; then
+          if [ -f package.json ] && ( [ "$(npm pkg get 'scripts.test:smoke')" != "null" ] || [ "$(npm pkg get scripts.smoke)" != "null" ] ); then
             echo "::group::Install Playwright browsers"
-            npx playwright install --with-deps
+            if grep -q "\"@playwright/test\"" package.json; then
+              npx playwright install --with-deps
+            else
+              echo "Playwright ist nicht in package.json definiert"
+            fi
             echo "::endgroup::"
 
             echo "::group::Run Playwright smoke tests"
-            npm run test:smoke
+            if [ "$(npm pkg get 'scripts.test:smoke')" != "null" ]; then
+              npm run test:smoke
+            else
+              npm run smoke
+            fi
             echo "::endgroup::"
           else
-            echo "Kein Smoke-Test-Script vorhanden"
+            echo "Kein Smoke-Test-Script oder package.json vorhanden"
           fi
 
-      - name: 12 - Security Scan
+      - name: 10 - Security Scan
         run: |
           echo "Schritt Security Scan ist erreicht"
 
@@ -145,12 +148,11 @@ jobs:
           fi
 
       #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
-
-      - name: 10 - Staging
+      - name: 11 - Staging
         run: echo "Schritt Staging ist erreicht"
 
-      - name: 15 - Deploy Staging
+      - name: 12 - Deploy Staging
         run: echo "Schritt Deploy Staging ist erreicht"
 
-      - name: 16 - Deploy Production
+      - name: 13 - Deploy Production
         run: echo "Schritt Deploy Production ist erreicht"
