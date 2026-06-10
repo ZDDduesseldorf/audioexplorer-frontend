@@ -65,8 +65,8 @@ jobs:
 
       - name: 05 - Linting
         run: |
-          echo "Schritt Linting ist erreicht"          
-          
+          echo "Schritt Linting ist erreicht"
+
           echo "::group::Run ESLint"
           if [ -f package.json ] && [ "$(npm pkg get scripts.lint)" != "null" ]; then
             npm run lint
