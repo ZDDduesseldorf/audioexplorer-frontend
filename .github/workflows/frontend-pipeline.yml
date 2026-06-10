@@ -65,7 +65,7 @@ jobs:
 
       - name: 05 - Linting
         run: |
-          echo "Schritt Linting ist erreicht"
+          echo "Schritt Linting ist erreicht"          
           
           echo "::group::Run ESLint"
           if [ -f package.json ] && [ "$(npm pkg get scripts.lint)" != "null" ]; then
@@ -148,7 +148,6 @@ jobs:
           fi
 
       #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
-      
       - name: 11 - Staging
         run: echo "Schritt Staging ist erreicht"
 
