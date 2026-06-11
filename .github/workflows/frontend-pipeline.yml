@@ -169,8 +169,8 @@ jobs:
           name: audioexplorer-frontend-image-${{ github.sha }}
           path: audioexplorer-frontend-image.tar.gz
           if-no-files-found: error
-          retention-days: 1      
-          
+          retention-days: 1
+
       - name: 13 - Staging
         run: echo "Schritt Staging ist erreicht"
 
