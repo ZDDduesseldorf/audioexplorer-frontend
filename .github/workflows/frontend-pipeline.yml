@@ -23,26 +23,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 01 - Commit Message
-        run: echo "Schritt Commit Message ist erreicht"
-
-      - name: 02 - Branch Protection
-        run: echo "Schritt Branch Protection ist erreicht"
-
-      - name: 03 - Set up Node.js (no cache)
+      - name: 01 - Set up Node.js (no cache)
         if: ${{ hashFiles('**/package-lock.json') == '' }}
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: 03 - Set up Node.js (npm cache)
-        if: ${{ hashFiles('**/package-lock.json') != '' }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          #cache: 'npm'
-
-      - name: 03b - Install dependencies
+      - name: 02 - Install dependencies
         run: |
           if [ -f package.json ] && [ -f package-lock.json ]; then
             echo "package.json + package-lock.json gefunden, installiere Abhaengigkeiten"
@@ -51,7 +38,7 @@ jobs:
             echo "Kein package.json oder package-lock.json, ueberspringe npm ci"
           fi
 
-      - name: 04 - Format
+      - name: 03 - Format
         run: |
           echo "Schritt Format ist erreicht"
 
@@ -63,7 +50,7 @@ jobs:
           fi
           echo "::endgroup::"
 
-      - name: 05 - Linting
+      - name: 04 - Linting
         run: |
           echo "Schritt Linting ist erreicht"
 
@@ -75,7 +62,7 @@ jobs:
           fi
           echo "::endgroup::"
 
-      - name: 06 - Typecheck
+      - name: 05 - Typecheck
         run: |
           echo "Schritt Typecheck ist erreicht"
 
@@ -87,7 +74,7 @@ jobs:
           fi
           echo "::endgroup::"
 
-      - name: 07 - Tests
+      - name: 06 - Tests
         run: |
           echo "Schritt Tests ist erreicht"
 
@@ -99,7 +86,7 @@ jobs:
           fi
           echo "::endgroup::"
 
-      - name: 08 - Build
+      - name: 07 - Build
         run: |
           echo "Schritt Build ist erreicht"
 
@@ -111,7 +98,7 @@ jobs:
           fi
           echo "::endgroup::"
 
-      - name: 09 - Smoke Tests
+      - name: 08 - Smoke Tests
         run: |
           echo "Schritt Smoke Tests ist erreicht"
 
@@ -135,7 +122,7 @@ jobs:
             echo "Kein Smoke-Test-Script oder package.json vorhanden"
           fi
 
-      - name: 10 - Security Scan
+      - name: 09 - Security Scan
         run: |
           echo "Schritt Security Scan ist erreicht"
 
@@ -148,11 +135,11 @@ jobs:
           fi
 
       #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
-      - name: 11 - Staging
+      - name: 10 - Staging
         run: echo "Schritt Staging ist erreicht"
 
-      - name: 12 - Deploy Staging
+      - name: 11 - Deploy Staging
         run: echo "Schritt Deploy Staging ist erreicht"
 
-      - name: 13 - Deploy Production
+      - name: 12 - Deploy Production
         run: echo "Schritt Deploy Production ist erreicht"
