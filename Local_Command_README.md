@@ -28,6 +28,12 @@ npm run format
 
 Runs the Prettier formatting check. This command only checks formatting and does not modify files.
 
+```bash
+npm run format:write
+```
+
+Runs the prettier formatting check in writing mode. This command applies the formating rules to all found files.
+
 ## Run linting
 
 ```bash
