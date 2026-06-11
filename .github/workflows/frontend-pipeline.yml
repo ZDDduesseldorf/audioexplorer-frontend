@@ -151,15 +151,15 @@ jobs:
         run: |
 
           echo "::group::Build Docker image"
-          docker build -t audioexplorer-frontend:${{ github.sha }} .
+          docker build -t audioexplorer-frontend-app:${{ github.sha }} .
           echo "::endgroup::"
 
           echo "::group::Inspect Docker image"
-          docker image inspect audioexplorer-frontend:${{ github.sha }}
+          docker image inspect audioexplorer-frontend-app:${{ github.sha }}
           echo "::endgroup::"
 
           echo "::group::Save Docker image as artifact file"
-          docker save audioexplorer-frontend:${{ github.sha }} | gzip > audioexplorer-frontend-image.tar.gz
+          docker save audioexplorer-frontend-app:${{ github.sha }} | gzip > audioexplorer-frontend-image.tar.gz
           ls -lh audioexplorer-frontend-image.tar.gz
           echo "::endgroup::"
 
