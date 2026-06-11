@@ -24,30 +24,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 01 - Set up Node.js (no cache)
-        if: ${{ hashFiles('**/package-lock.json') == '' }}
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
       - name: 02 - Install dependencies
-        run: |
-          if [ -f package.json ] && [ -f package-lock.json ]; then
-            echo "package.json + package-lock.json gefunden, installiere Abhaengigkeiten"
-            npm ci
-          else
-            echo "Kein package.json oder package-lock.json, ueberspringe npm ci"
-          fi
+        run: npm ci
 
       - name: 03 - Format
         run: |
           echo "Schritt Format ist erreicht"
 
           echo "::group::Run Prettier format check"
-          if [ -f package.json ] && [ "$(npm pkg get scripts.format)" != "null" ]; then
             npm run format
-          else
-            echo "Kein Format-Script oder package.json vorhanden"
-          fi
           echo "::endgroup::"
 
       - name: 04 - Linting
@@ -55,11 +44,7 @@ jobs:
           echo "Schritt Linting ist erreicht"
 
           echo "::group::Run ESLint"
-          if [ -f package.json ] && [ "$(npm pkg get scripts.lint)" != "null" ]; then
             npm run lint
-          else
-            echo "Kein Lint-Script oder package.json vorhanden"
-          fi
           echo "::endgroup::"
 
       - name: 05 - Typecheck
@@ -67,11 +52,7 @@ jobs:
           echo "Schritt Typecheck ist erreicht"
 
           echo "::group::Run frontend type check"
-          if [ -f package.json ] && [ "$(npm pkg get scripts.typecheck)" != "null" ]; then
             npm run typecheck
-          else
-            echo "Kein Typecheck-Script oder package.json vorhanden"
-          fi
           echo "::endgroup::"
 
       - name: 06 - Tests
@@ -79,11 +60,7 @@ jobs:
           echo "Schritt Tests ist erreicht"
 
           echo "::group::Run frontend tests"
-          if [ -f package.json ] && [ "$(npm pkg get scripts.test)" != "null" ]; then
             npm test
-          else
-            echo "Kein Test-Script oder package.json vorhanden"
-          fi
           echo "::endgroup::"
 
       - name: 07 - Build
@@ -91,24 +68,16 @@ jobs:
           echo "Schritt Build ist erreicht"
 
           echo "::group::Run frontend build"
-          if [ -f package.json ] && [ "$(npm pkg get scripts.build)" != "null" ]; then
             npm run build
-          else
-            echo "Kein Build-Script oder package.json vorhanden"
-          fi
           echo "::endgroup::"
 
       - name: 08 - Smoke Tests
         run: |
           echo "Schritt Smoke Tests ist erreicht"
 
-          if [ -f package.json ] && ( [ "$(npm pkg get 'scripts.test:smoke')" != "null" ] || [ "$(npm pkg get scripts.smoke)" != "null" ] ); then
             echo "::group::Install Playwright browsers"
             if grep -q "\"@playwright/test\"" package.json; then
               npx playwright install --with-deps
-            else
-              echo "Playwright ist nicht in package.json definiert"
-            fi
             echo "::endgroup::"
 
             echo "::group::Run Playwright smoke tests"
@@ -118,21 +87,15 @@ jobs:
               npm run smoke
             fi
             echo "::endgroup::"
-          else
-            echo "Kein Smoke-Test-Script oder package.json vorhanden"
-          fi
+            fi
 
       - name: 09 - Security Scan
         run: |
           echo "Schritt Security Scan ist erreicht"
 
-          if [ -f package.json ]; then
             echo "::group::Run npm audit (high)"
             npm audit --audit-level=high
             echo "::endgroup::"
-          else
-            echo "Kein package.json vorhanden"
-          fi
 
       #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
       - name: 10 - Staging
