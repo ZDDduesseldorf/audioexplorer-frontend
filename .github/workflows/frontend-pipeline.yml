@@ -147,12 +147,35 @@ jobs:
             echo "Kein package.json vorhanden"
           fi
 
-      #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
-      - name: 11 - Staging
+      - name: 11 - Docker Build
+        run: |
+
+          echo "::group::Build Docker image"
+          docker build -t audioexplorer-frontend:${{ github.sha }} .
+          echo "::endgroup::"
+
+          echo "::group::Inspect Docker image"
+          docker image inspect audioexplorer-frontend:${{ github.sha }}
+          echo "::endgroup::"
+
+          echo "::group::Save Docker image as artifact file"
+          docker save audioexplorer-frontend:${{ github.sha }} | gzip > audioexplorer-frontend-image.tar.gz
+          ls -lh audioexplorer-frontend-image.tar.gz
+          echo "::endgroup::"
+
+      - name: 12 - Upload Docker Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audioexplorer-frontend-image-${{ github.sha }}
+          path: audioexplorer-frontend-image.tar.gz
+          if-no-files-found: error
+          retention-days: 1      
+          
+      - name: 13 - Staging
         run: echo "Schritt Staging ist erreicht"
 
-      - name: 12 - Deploy Staging
+      - name: 14 - Deploy Staging
         run: echo "Schritt Deploy Staging ist erreicht"
 
-      - name: 13 - Deploy Production
+      - name: 15 - Deploy Production
         run: echo "Schritt Deploy Production ist erreicht"
