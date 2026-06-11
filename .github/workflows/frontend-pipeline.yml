@@ -97,12 +97,35 @@ jobs:
             npm audit --audit-level=high
             echo "::endgroup::"
 
-      #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
-      - name: 10 - Staging
-        run: echo "Staging step is reached"
+      - name: 11 - Docker Build
+        run: |
 
-      - name: 11 - Deploy Staging
-        run: echo "Deploy Staging step is reached"
+          echo "::group::Build Docker image"
+          docker build -t audioexplorer-frontend-app:${{ github.sha }} .
+          echo "::endgroup::"
 
-      - name: 12 - Deploy Production
-        run: echo "Deploy Production step is reached"
+          echo "::group::Inspect Docker image"
+          docker image inspect audioexplorer-frontend-app:${{ github.sha }}
+          echo "::endgroup::"
+
+          echo "::group::Save Docker image as artifact file"
+          docker save audioexplorer-frontend-app:${{ github.sha }} | gzip > audioexplorer-frontend-image.tar.gz
+          ls -lh audioexplorer-frontend-image.tar.gz
+          echo "::endgroup::"
+
+      - name: 12 - Upload Docker Image Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audioexplorer-frontend-image-${{ github.sha }}
+          path: audioexplorer-frontend-image.tar.gz
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: 13 - Staging
+        run: echo "Schritt Staging ist erreicht"
+
+      - name: 14 - Deploy Staging
+        run: echo "Schritt Deploy Staging ist erreicht"
+
+      - name: 15 - Deploy Production
+        run: echo "Schritt Deploy Production ist erreicht"
