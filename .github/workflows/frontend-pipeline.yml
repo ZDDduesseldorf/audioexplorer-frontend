@@ -33,7 +33,7 @@ jobs:
 
       - name: 03 - Format
         run: |
-          echo "Schritt Format ist erreicht"
+          echo "Formatting step is reached"
 
           echo "::group::Run Prettier format check"
             npm run format
@@ -41,7 +41,7 @@ jobs:
 
       - name: 04 - Linting
         run: |
-          echo "Schritt Linting ist erreicht"
+          echo "Linting step is reached"
 
           echo "::group::Run ESLint"
             npm run lint
@@ -49,7 +49,7 @@ jobs:
 
       - name: 05 - Typecheck
         run: |
-          echo "Schritt Typecheck ist erreicht"
+          echo "Typecheck step is reached"
 
           echo "::group::Run frontend type check"
             npm run typecheck
@@ -57,7 +57,7 @@ jobs:
 
       - name: 06 - Tests
         run: |
-          echo "Schritt Tests ist erreicht"
+          echo "Tests step is reached"
 
           echo "::group::Run frontend tests"
             npm test
@@ -65,7 +65,7 @@ jobs:
 
       - name: 07 - Build
         run: |
-          echo "Schritt Build ist erreicht"
+          echo "Build step is reached"
 
           echo "::group::Run frontend build"
             npm run build
@@ -73,7 +73,7 @@ jobs:
 
       - name: 08 - Smoke Tests
         run: |
-          echo "Schritt Smoke Tests ist erreicht"
+          echo "Smoke Tests step is reached"
 
             echo "::group::Install Playwright browsers"
             if grep -q "\"@playwright/test\"" package.json; then
@@ -91,7 +91,7 @@ jobs:
 
       - name: 09 - Security Scan
         run: |
-          echo "Schritt Security Scan ist erreicht"
+          echo "Security Scan step is reached"
 
             echo "::group::Run npm audit (high)"
             npm audit --audit-level=high
@@ -99,10 +99,10 @@ jobs:
 
       #TODO: Docker-Image bauen und in Registry pushen, damit es in Staging/Production Deployments verwendet werden kann
       - name: 10 - Staging
-        run: echo "Schritt Staging ist erreicht"
+        run: echo "Staging step is reached"
 
       - name: 11 - Deploy Staging
-        run: echo "Schritt Deploy Staging ist erreicht"
+        run: echo "Deploy Staging step is reached"
 
       - name: 12 - Deploy Production
-        run: echo "Schritt Deploy Production ist erreicht"
+        run: echo "Deploy Production step is reached"
