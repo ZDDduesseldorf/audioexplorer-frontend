@@ -11,3 +11,9 @@ Place a `data/` folder one level above this directory (i.e. at `../data/`).
 ```bash
 npm run dev
 ```
+
+## Developer Documentation
+
+For local development, setup instructions, and commands that mirror the CI pipeline, see:
+
+- [Local Development Guide](Local_Command_README.md)
