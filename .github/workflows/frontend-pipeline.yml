@@ -72,6 +72,7 @@ jobs:
           echo "::endgroup::"
 
       - name: 08 - Smoke Tests
+        if: github.event_name == 'pull_request'
         run: |
           echo "Smoke Tests step is reached"
 
