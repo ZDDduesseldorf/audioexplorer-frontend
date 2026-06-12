@@ -51,6 +51,11 @@ export function NodeDetails({ node, onClose }: NodeDetailsProps) {
           </span>
         </div>
       </div>
+      <div className="annotation-section">
+        <div className="annotation-divider" />
+        <h3 className="annotation-title">Annotation</h3>
+        <div className="annotation-divider" />
+      </div>
     </div>
   );
 }
