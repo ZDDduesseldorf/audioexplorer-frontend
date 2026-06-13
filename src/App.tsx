@@ -28,9 +28,9 @@ export default function App() {
   return (
     <div className="app-layout">
       {isFilterSidebarOpen && (
-        <FilterSidebar onClose={()=> setIsFilterSidebarOpen(false)} />
+        <FilterSidebar onClose={() => setIsFilterSidebarOpen(false)} />
       )}
-        
+
       {!isFilterSidebarOpen && (
         <button
           className="filter-open-btn"
@@ -38,10 +38,10 @@ export default function App() {
           onClick={() => setIsFilterSidebarOpen(true)}
           aria-label="Show filter sidebar"
         >
-        →
+          →
         </button>
       )}
-      
+
       <div className="canvas-area">
         <div className="map-panel">
           <div className="header-overlay">

@@ -9,25 +9,24 @@ export function FilterSidebar({ onClose }: FilterSidebarProps) {
   const [showTestLabel, setShowTestLabel] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  
   return (
     <aside className="filter-sidebar" aria-label="Filter sidebar">
-      <div className="filter-header">      
+      <div className="filter-header">
         <h2 className="filter-title">Filters</h2>
 
-        <button 
+        <button
           className="filter-close-btn"
           type="button"
           onClick={onClose}
           aria-label="Hide filter sidebar"
         >
-        ← 
+          ←
         </button>
       </div>
       <section className="filter-section">
         <label className="filter-option">
           <span>labeled</span>
-          
+
           <input
             className="filter-checkbox"
             type="checkbox"
@@ -38,7 +37,7 @@ export function FilterSidebar({ onClose }: FilterSidebarProps) {
 
         <label className="filter-option">
           <span>unlabeled</span>
-          
+
           <input
             className="filter-checkbox"
             type="checkbox"
@@ -55,7 +54,7 @@ export function FilterSidebar({ onClose }: FilterSidebarProps) {
 
           <div className="filter-option-controls">
             <span className="filter-count">xx</span>
-            
+
             <input
               className="filter-checkbox"
               type="checkbox"
@@ -76,7 +75,7 @@ export function FilterSidebar({ onClose }: FilterSidebarProps) {
             viewBox="0 0 24 24"
           >
             <circle cx="11" cy="11" r="6" />
-            <path d="M16 16L21 21"/>
+            <path d="M16 16L21 21" />
           </svg>
           <input
             className="filter-search-input"
