@@ -1,4 +1,3 @@
-
 /* ── Colors ─────────────────────────────────────────────── */
 :root {
   --color-black: #000000;
@@ -6,9 +5,8 @@
 
   --color-orange: #ff8400;
   --color-light-blue: #8fa0d8;
-   --color-dark-blue: #0b0829;
+  --color-dark-blue: #0b0829;
   --color-cream: #f9dfc6;
-
 }
 
 /* ── Layout ─────────────────────────────────────────────── */
@@ -257,7 +255,6 @@
   padding-bottom: 14px;
   border-bottom: 2px solid var(--color-light-blue);
 }
-
 
 .filter-title {
   margin: 0;
