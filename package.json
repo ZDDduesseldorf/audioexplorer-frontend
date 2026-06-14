@@ -1,5 +1,5 @@
 {
-  "name": "${PROJECT_NAME}",
+  "name": "audio-explorer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

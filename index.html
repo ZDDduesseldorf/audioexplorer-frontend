@@ -1,0 +1,127 @@
+HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Explorer</title>
+    <link rel="stylesheet" href="src/style.css" />
+</head>
+<body>
+<header class="app-header">
+    <div class="header-left">
+        <div class="logo-wave" aria-hidden=\"true\" id="header-wave"></div>
+        <span class="app-title">Audio Explorer</span>
+    </div>
+    <div class="header-right">
+        <span class="header-year">2026</span>
+    </div>
+</header>
+
+<main class="app-main">
+    <aside class="panel panel-filters" id="filter-panel">
+        <h2 class="panel-title">Filters</h2>
+        <div class="filter-group">
+            <label class="filter-row">
+                <span class="dot dot-labeled"></span>
+                <span class="filter-name">labeled</span>
+                <input type="checkbox" id="f-labeled" checked />
+            </label>
+            <label class="filter-row">
+                <span class="dot dot-unlabeled"></span>
+                <span class="filter-name">unlabeled</span>
+                <input type="checkbox" id="f-unlabeled" checked />
+            </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">Filter by Label</h3>
+        <div id="label-list"></div>
+
+        <div class="divider"></div>
+
+        <h3 class="section-title">Search</h3>
+        <input type="text" class="search-input" id="search-input" placeholder="Search file name..." />
+    </aside>
+
+    <section class="center-stage">
+        <div class="canvas-wrap">
+            <div class="map-overlay-title">Audio 2D Map</div>
+            <canvas id="scatter"></canvas>
+            <canvas id="mini-canvas"></canvas>
+        </div>
+    </section>
+
+    <aside class="panel panel-right">
+        <section class="right-section">
+            <h2 class="panel-title">Selected Sample</h2>
+            <div class="sample-card">
+                <div class="card-row-top">
+                    <button class="player-btn" id="play-btn" title="Play sample">
+                        <svg id="play-icon" viewBox="0 0 16 16"><path d="M4 2v12l9-6z"/></svg>
+                    </button>
+                    <div class="card-meta">
+                        <div class="file-name" id="p-filename">---</div>
+                        <div class="file-id" id="p-id">ID: —</div>
+                    </div>
+                </div>
+
+                <div class="waveform" id="waveform"></div>
+
+                <div class="meta-grid">
+                    <div class="meta-row"><span class="meta-key">Existing Label</span><span class="badge" id="p-label">—</span></div>
+                    <div class="meta-row"><span class="meta-key">Date Added</span><span class="badge" id="p-date">—</span></div>
+                    <div class="meta-row"><span class="meta-key">Duration</span><span class="badge" id="p-duration">—</span></div>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="right-section">
+            <h3 class="section-title">Anomaly Explorer</h3>
+            <div class="anomaly-row">
+                <span class="anomaly-name">Isolation Forest</span>
+                <div class="anomaly-bar-wrap">
+                    <div class="anomaly-bar" id="iso-bar"><div class="anomaly-fill"></div></div>
+                </div>
+                <span class="anomaly-pill" id="iso-val">—</span>
+            </div>
+            <div class="anomaly-row">
+                <span class="anomaly-name">Local Outlier Factor</span>
+                <div class="anomaly-bar-wrap">
+                    <div class="anomaly-bar" id="lof-bar"><div class="anomaly-fill"></div></div>
+                </div>
+                <span class="anomaly-pill" id="lof-val">—</span>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <section class="right-section">
+            <h2 class="panel-title">Annotation</h2>
+            <div class="meta-row" style="margin-bottom:8px">
+                <span class="meta-key">Current Status</span>
+                <span class="status-badge" id="a-status">—</span>
+            </div>
+            <label class="field-label">Label</label>
+            <div class="select-wrap">
+                <select id="a-label"></select>
+            </div>
+            <label class="field-label">Or enter new Label</label>
+            <input type="text" class="text-input" id="new-label" placeholder="type new label..." />
+            <label class="field-label">Comment / Note</label>
+            <textarea class="text-area" id="comment" placeholder="..."></textarea>
+            <div class="btn-row">
+                <button class="btn-secondary" id="btn-confirm">Confirm</button>
+                <button class="btn-primary" id="btn-next">Next →</button>
+            </div>
+        </section>
+    </aside>
+</main>
+
+<script src="src/main.js" type="module"></script>
+</body>
+</html>
