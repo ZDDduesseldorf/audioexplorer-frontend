@@ -5,6 +5,7 @@ import type { PointData } from "../../domain/types";
 import { getClusterColor } from "../../domain/clusters";
 import type { GraphEngine } from "./GraphEngine";
 import { SigmaEngineAdapter } from "./SigmaEngineAdapter";
+import { playAudioByUuid, stopAudio } from "../../services/audioPlayerService";
 
 interface GraphEngineCallbacks {
   onNodeClick?: (node: PointData) => void;
@@ -22,12 +23,16 @@ export function useGraphEngine(
   points: PointData[],
   nodeSize: number,
   selectedId: string | null,
+  isHoverAudioEnabled: boolean,
   callbacks: GraphEngineCallbacks,
 ): GraphEngine | null {
   const [engine, setEngine] = useState<GraphEngine | null>(null);
 
   const nodeSizeRef = useRef(nodeSize);
   const selectedIdRef = useRef(selectedId);
+
+  // stores whether hover audio is enabled
+  const isHoverAudioEnabledRef = useRef(isHoverAudioEnabled);
 
   // Callback refs so Sigma event handlers always call the latest version
   const onNodeClickRef = useRef(callbacks.onNodeClick);
@@ -43,6 +48,15 @@ export function useGraphEngine(
   useEffect(() => {
     onHoverChangeRef.current = callbacks.onHoverChange;
   }, [callbacks.onHoverChange]);
+
+  // if hover auio gets disabled -> stop sounds
+  useEffect(() => {
+    isHoverAudioEnabledRef.current = isHoverAudioEnabled;
+
+    if (!isHoverAudioEnabled) {
+      stopAudio();
+    }
+  }, [isHoverAudioEnabled]);
 
   // Build graph + Sigma once when points arrive
   useEffect(() => {
@@ -91,6 +105,11 @@ export function useGraphEngine(
     }) => {
       onHoverChangeRef.current?.(node, { x: event.x, y: event.y });
       sigma.getContainer().style.cursor = "pointer";
+
+      // only starts audio hover when both sidebars are closed
+      if (!isHoverAudioEnabledRef.current) return;
+
+      playAudioByUuid(node);
     };
 
     const handleLeaveNode = () => {

@@ -9,6 +9,7 @@ interface GraphViewProps {
   points: PointData[];
   selectedId: string | null;
   nodeSize: number;
+  isHoverAudioEnabled: boolean;
   onNodeClick: (node: PointData) => void;
   onStageClick: () => void;
 }
@@ -17,6 +18,7 @@ export function GraphView({
   points,
   selectedId,
   nodeSize,
+  isHoverAudioEnabled,
   onNodeClick,
   onStageClick,
 }: GraphViewProps) {
@@ -34,7 +36,7 @@ export function GraphView({
     [],
   );
 
-  const engine = useGraphEngine(containerRef, points, nodeSize, selectedId, {
+  const engine = useGraphEngine(containerRef, points, nodeSize, selectedId, isHoverAudioEnabled, {
     onNodeClick,
     onStageClick,
     onHoverChange: handleHoverChange,
