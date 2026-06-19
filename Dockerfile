@@ -3,7 +3,6 @@ FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-COPY package-lock.json ./
 RUN npm ci
 
 COPY . .
@@ -22,4 +21,4 @@ COPY --from=build /app/dist ./dist
 
 EXPOSE 4173
 
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"]
+CMD ["sh", "-c", "echo \"\" && echo \"Frontend is ready!\" && echo \"Access the application at: http://localhost:4173\" && echo \"(If running on a remote host, replace localhost with the host IP address)\" && echo \"\" && npm run preview -- --host 0.0.0.0"]
