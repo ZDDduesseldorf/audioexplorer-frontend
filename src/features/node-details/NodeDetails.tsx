@@ -11,16 +11,17 @@ interface NodeDetailsProps {
 export function NodeDetails({ node, onClose }: NodeDetailsProps) {
   // tracks if audio button show play or stop state
   const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    stopAudio();
+    setIsPlaying(false);
+  }, [node?.id]);
+
   if (!node) return null;
 
   // audio id used to requests the file from backend
   const nodeId = node.id;
   const clusterColor = getClusterColor(node.cluster);
-
-  useEffect(() => {
-    stopAudio;
-    setIsPlaying(false);
-  }, [nodeId]);
 
   // starts audio from selected node and updates button state
   function StartAudioPlayback() {
