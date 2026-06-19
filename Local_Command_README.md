@@ -98,6 +98,32 @@ npm audit --audit-level=high
 
 Checks dependencies for known security vulnerabilities. The command fails if vulnerabilities with severity `high` or higher are found.
 
+## Docker
+
+### Build Docker image
+
+```bash
+docker build -t audioexplorer-frontend:latest .
+```
+
+Builds a Docker image from the Dockerfile.
+
+### Run Docker container
+
+```bash
+docker run -p 4173:4173 audioexplorer-frontend:latest
+```
+
+Runs the Docker container and maps port 4173 from the container to port 4173 on the host machine. You can then access the frontend at `http://localhost:4173` in your browser.
+
+### Run Docker container with custom port mapping
+
+```bash
+docker run -p 8080:4173 audioexplorer-frontend:latest
+```
+
+Runs the Docker container and maps port 4173 from the container to port 8080 on the host machine. You can then access the frontend at `http://localhost:8080` in your browser.
+
 ## Set a local image tag
 
 ```bash
@@ -106,7 +132,7 @@ GIT_SHA=$(git rev-parse --short HEAD)
 
 The pipeline tags Docker images with the GitHub commit SHA. Locally, this command creates a similar tag from the current Git commit.
 
-## Build the Docker image
+## Build the Docker image (tagged with Git SHA)
 
 ```bash
 docker build -t audioexplorer-frontend-app:$GIT_SHA .
