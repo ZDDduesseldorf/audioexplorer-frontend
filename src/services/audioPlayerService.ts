@@ -1,6 +1,6 @@
 import { Howl } from "howler";
 
-// stores current active howler sound 
+// stores current active howler sound
 let currentSound: Howl | null = null;
 
 export function playAudioByUuid(uuid: string) {

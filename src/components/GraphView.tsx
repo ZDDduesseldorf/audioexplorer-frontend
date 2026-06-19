@@ -36,11 +36,18 @@ export function GraphView({
     [],
   );
 
-  const engine = useGraphEngine(containerRef, points, nodeSize, selectedId, isHoverAudioEnabled, {
-    onNodeClick,
-    onStageClick,
-    onHoverChange: handleHoverChange,
-  });
+  const engine = useGraphEngine(
+    containerRef,
+    points,
+    nodeSize,
+    selectedId,
+    isHoverAudioEnabled,
+    {
+      onNodeClick,
+      onStageClick,
+      onHoverChange: handleHoverChange,
+    },
+  );
 
   return (
     <div className="sigma-container" style={{ position: "relative" }}>
