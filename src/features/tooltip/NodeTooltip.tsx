@@ -4,9 +4,15 @@ interface NodeTooltipProps {
   hoveredId: string | null;
   position: { x: number; y: number } | null;
   points: PointData[];
+  variant?: "hover" | "selected";
 }
 
-export function NodeTooltip({ hoveredId, position, points }: NodeTooltipProps) {
+export function NodeTooltip({
+  hoveredId,
+  position,
+  points,
+  variant = "hover",
+}: NodeTooltipProps) {
   if (!hoveredId || !position) return null;
 
   const point = points.find((p) => p.id === hoveredId);
@@ -14,16 +20,13 @@ export function NodeTooltip({ hoveredId, position, points }: NodeTooltipProps) {
 
   return (
     <div
-      className="node-tooltip"
+      className={`node-tooltip node-tooltip--${variant}`}
       style={{
-        left: position.x + 12,
-        top: position.y - 40,
+        left: position.x,
+        top: position.y,
       }}
     >
       <div className="tooltip-label">{point.label}</div>
-      <div className="tooltip-coords">
-        x: {point.x.toFixed(2)}, y: {point.y.toFixed(2)}
-      </div>
     </div>
   );
 }
