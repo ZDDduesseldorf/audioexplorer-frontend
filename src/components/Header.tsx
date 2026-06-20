@@ -1,4 +1,4 @@
-import Logo from "../assets/test_logo.png";
+import Logo from "../assets/Logo_orange_gross.svg";
 
 interface HeaderProps {
   onAboutClick: () => void;
@@ -14,7 +14,7 @@ export function Header({ onAboutClick, onLogoClick }: HeaderProps) {
         onClick={onLogoClick}
         aria-label="go to main page"
       >
-        <img className="site-logo" src={Logo} alt="Audio Explorer" />
+        <img className="site-logo" src={Logo} alt="Logo Audio Explorer" />
       </button>
 
       <button
