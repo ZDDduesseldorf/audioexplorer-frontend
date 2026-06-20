@@ -9,6 +9,7 @@ interface GraphViewProps {
   points: PointData[];
   selectedId: string | null;
   nodeSize: number;
+  isHoverAudioEnabled: boolean;
   onNodeClick: (node: PointData) => void;
   onStageClick: () => void;
 }
@@ -17,6 +18,7 @@ export function GraphView({
   points,
   selectedId,
   nodeSize,
+  isHoverAudioEnabled,
   onNodeClick,
   onStageClick,
 }: GraphViewProps) {
@@ -34,11 +36,18 @@ export function GraphView({
     [],
   );
 
-  const engine = useGraphEngine(containerRef, points, nodeSize, selectedId, {
-    onNodeClick,
-    onStageClick,
-    onHoverChange: handleHoverChange,
-  });
+  const engine = useGraphEngine(
+    containerRef,
+    points,
+    nodeSize,
+    selectedId,
+    isHoverAudioEnabled,
+    {
+      onNodeClick,
+      onStageClick,
+      onHoverChange: handleHoverChange,
+    },
+  );
 
   return (
     <div className="sigma-container" style={{ position: "relative" }}>

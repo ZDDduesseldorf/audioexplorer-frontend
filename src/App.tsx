@@ -76,6 +76,7 @@ export default function App() {
                 points={points}
                 selectedId={selectedNode?.id ?? null}
                 nodeSize={nodeSize}
+                isHoverAudioEnabled={!selectedNode && !isFilterSidebarOpen}
                 onNodeClick={handleNodeClick}
                 onStageClick={handleStageClick}
               />
