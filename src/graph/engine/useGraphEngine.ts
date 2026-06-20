@@ -119,7 +119,10 @@ export function useGraphEngine(
     });
 
     const getNodeViewportPosition = (node: string) => {
-      const nodeData = graph.getNodeAttributes(node) as { x: number; y: number };
+      const nodeData = graph.getNodeAttributes(node) as {
+        x: number;
+        y: number;
+      };
 
       return sigma.graphToViewport({
         x: nodeData.x,
