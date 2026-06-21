@@ -445,8 +445,6 @@
   font-size: 18px;
   font-weight: 700;
   color: var(--color-cream);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }
 
 .close-btn {
