@@ -166,7 +166,7 @@
   position: absolute;
   pointer-events: none;
   z-index: 100;
-  padding: 4px 16px;
+  padding: 3px 10px;
   border: 2px solid var(--color-orange);
   border-radius: 999px;
   background: var(--color-orange);
@@ -182,7 +182,7 @@
 .tooltip-label {
   margin: 0;
   color: var(--color-dark-blue);
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.1;
 }
