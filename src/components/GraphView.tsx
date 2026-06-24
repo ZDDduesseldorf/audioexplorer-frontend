@@ -19,7 +19,9 @@ export function GraphView({ points }: GraphViewProps) {
   const isHoverAudioEnabled = !selectedId && !isFilterSidebarOpen;
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(
+    null,
+  );
 
   const handleHoverChange = useCallback(
     (nodeId: string | null, pos: { x: number; y: number } | null) => {
@@ -50,7 +52,11 @@ export function GraphView({ points }: GraphViewProps) {
       <Minimap engine={engine} points={points} />
 
       {hoveredId && hoverPos && (
-        <NodeTooltip hoveredId={hoveredId} position={hoverPos} points={points} />
+        <NodeTooltip
+          hoveredId={hoveredId}
+          position={hoverPos}
+          points={points}
+        />
       )}
     </div>
   );

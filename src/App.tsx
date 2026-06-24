@@ -12,8 +12,13 @@ import "./App.css";
 export default function App() {
   const { data: points, loading, error } = useAudioData("data-5k");
 
-  const { selectedId, nodeSize, setNodeSize, isFilterSidebarOpen, setFilterSidebarOpen } =
-    useAppStore();
+  const {
+    selectedId,
+    nodeSize,
+    setNodeSize,
+    isFilterSidebarOpen,
+    setFilterSidebarOpen,
+  } = useAppStore();
 
   const selectedNode = useMemo(
     () => points.find((p) => p.id === selectedId) ?? null,
