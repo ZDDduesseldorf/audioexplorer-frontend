@@ -4,29 +4,22 @@ import { useGraphEngine } from "../graph/engine/useGraphEngine";
 import { Minimap } from "../graph/minimap/Minimap";
 import { KNNOverlay } from "../graph/overlay/KNNOverlay";
 import { NodeTooltip } from "../features/tooltip/NodeTooltip";
+import { useAppStore } from "../store/useAppStore";
 
 interface GraphViewProps {
   points: PointData[];
-  selectedId: string | null;
-  nodeSize: number;
-  isHoverAudioEnabled: boolean;
-  onNodeClick: (node: PointData) => void;
-  onStageClick: () => void;
 }
 
-export function GraphView({
-  points,
-  selectedId,
-  nodeSize,
-  isHoverAudioEnabled,
-  onNodeClick,
-  onStageClick,
-}: GraphViewProps) {
+export function GraphView({ points }: GraphViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { selectedId, nodeSize, isFilterSidebarOpen, select, clearSelection } =
+    useAppStore();
+
+  const isHoverAudioEnabled = !selectedId && !isFilterSidebarOpen;
+
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(
-    null,
-  );
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
 
   const handleHoverChange = useCallback(
     (nodeId: string | null, pos: { x: number; y: number } | null) => {
@@ -43,8 +36,8 @@ export function GraphView({
     selectedId,
     isHoverAudioEnabled,
     {
-      onNodeClick,
-      onStageClick,
+      onNodeClick: (node: PointData) => select(node.id),
+      onStageClick: clearSelection,
       onHoverChange: handleHoverChange,
     },
   );
@@ -52,9 +45,13 @@ export function GraphView({
   return (
     <div className="sigma-container" style={{ position: "relative" }}>
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+
       <KNNOverlay engine={engine} hoveredId={hoveredId} points={points} />
       <Minimap engine={engine} points={points} />
-      <NodeTooltip hoveredId={hoveredId} position={hoverPos} points={points} />
+
+      {hoveredId && hoverPos && (
+        <NodeTooltip hoveredId={hoveredId} position={hoverPos} points={points} />
+      )}
     </div>
   );
 }

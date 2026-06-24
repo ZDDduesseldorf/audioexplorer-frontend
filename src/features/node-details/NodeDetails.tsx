@@ -2,13 +2,14 @@ import type { PointData } from "../../domain/types";
 import { getClusterColor } from "../../domain/clusters";
 import { playAudioByUuid, stopAudio } from "../../services/audioPlayerService";
 import { useEffect, useState } from "react";
+import { useAppStore } from "../../store/useAppStore";
 
 interface NodeDetailsProps {
   node: PointData | null;
-  onClose: () => void;
 }
 
-export function NodeDetails({ node, onClose }: NodeDetailsProps) {
+export function NodeDetails({ node }: NodeDetailsProps) {
+  const clearSelection = useAppStore((s) => s.clearSelection);
   // tracks if audio button show play or stop state
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -41,7 +42,7 @@ export function NodeDetails({ node, onClose }: NodeDetailsProps) {
         <h2>Point Details</h2>
         <button
           className="close-btn"
-          onClick={onClose}
+          onClick={clearSelection}
           aria-label="Close sidebar"
         >
           ✕

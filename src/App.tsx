@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, ChangeEvent } from "react";
+import { useState, useMemo, ChangeEvent } from "react";
 import { GraphView } from "./components/GraphView";
 import { NodeDetails } from "./features/node-details/NodeDetails";
 import { FilterSidebar } from "./features/filters/FilterSidebar";
@@ -6,29 +6,27 @@ import { useAudioData } from "./hooks/useAudioData";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { AboutPage } from "./components/AboutPage";
-import type { PointData } from "./domain/types";
+import { useAppStore } from "./store/useAppStore";
 import "./App.css";
 
 export default function App() {
   const { data: points, loading, error } = useAudioData("data-5k");
 
-  const [selectedNode, setSelectedNode] = useState<PointData | null>(null);
-  const [nodeSize, setNodeSize] = useState(2);
+  const { selectedId, nodeSize, setNodeSize, isFilterSidebarOpen, setFilterSidebarOpen } =
+    useAppStore();
 
-  const [showAboutPage, setShowAboutPage] = useState(false);
-
-  const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
+  const selectedNode = useMemo(
+    () => points.find((p) => p.id === selectedId) ?? null,
+    [points, selectedId],
+  );
 
   const clusterCount = useMemo(
     () => new Set(points.map((p) => p.cluster)).size,
     [points],
   );
 
-  const handleNodeClick = useCallback(
-    (node: PointData) => setSelectedNode(node),
-    [],
-  );
-  const handleStageClick = useCallback(() => setSelectedNode(null), []);
+  // showAboutPage stays local — only App + Header use it
+  const [showAboutPage, setShowAboutPage] = useState(false);
 
   return (
     <div className="app-shell">
@@ -41,15 +39,13 @@ export default function App() {
         <AboutPage />
       ) : (
         <main className="app-layout">
-          {isFilterSidebarOpen && (
-            <FilterSidebar onClose={() => setIsFilterSidebarOpen(false)} />
-          )}
+          {isFilterSidebarOpen && <FilterSidebar />}
 
           {!isFilterSidebarOpen && (
             <button
               className="filter-open-btn"
               type="button"
-              onClick={() => setIsFilterSidebarOpen(true)}
+              onClick={() => setFilterSidebarOpen(true)}
               aria-label="Show filter sidebar"
             >
               →
@@ -72,14 +68,8 @@ export default function App() {
                   </span>
                 )}
               </div>
-              <GraphView
-                points={points}
-                selectedId={selectedNode?.id ?? null}
-                nodeSize={nodeSize}
-                isHoverAudioEnabled={!selectedNode && !isFilterSidebarOpen}
-                onNodeClick={handleNodeClick}
-                onStageClick={handleStageClick}
-              />
+
+              <GraphView points={points} />
 
               <div className="size-control">
                 <label className="size-label">Size</label>
@@ -99,12 +89,7 @@ export default function App() {
             </div>
           </div>
 
-          {selectedNode && (
-            <NodeDetails
-              node={selectedNode}
-              onClose={() => setSelectedNode(null)}
-            />
-          )}
+          {selectedNode && <NodeDetails node={selectedNode} />}
         </main>
       )}
 
