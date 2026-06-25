@@ -14,14 +14,28 @@ HTML
         <div class="logo-wave" aria-hidden="true" id="header-wave"></div>
         <span class="app-title">Audio Explorer</span>
     </div>
+    <nav class="header-nav">
+        <button class="nav-btn nav-btn-active" data-view="map">Map</button>
+        <button class="nav-btn" data-view="dataset">Dataset</button>
+        <button class="nav-btn" data-view="export">Export</button>
+    </nav>
     <div class="header-right">
+        <span class="header-stat" id="hdr-total">— samples</span>
+        <span class="header-stat" id="hdr-labeled">— labeled</span>
         <span class="header-year">2026</span>
     </div>
 </header>
 
 <main class="app-main">
     <aside class="panel panel-filters" id="filter-panel">
-        <h2 class="panel-title">Filters</h2>
+        <div class="panel-filters-header">
+            <h2 class="panel-title">Filters</h2>
+            <button class="filter-close-btn" id="filter-toggle" title="Close filters" aria-label="Close filters">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
         <div class="filter-group">
             <label class="filter-row">
                 <span class="dot dot-labeled"></span>
@@ -121,6 +135,19 @@ HTML
         </section>
     </aside>
 </main>
+
+<footer class="app-footer">
+    <div class="footer-left">
+        <span class="footer-text">Audio Explorer · v0.1.0</span>
+        <a href="https://github.com/shermineh63/audio-explorer" class="footer-link" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+    <div class="footer-center">
+        <span class="footer-status" id="footer-status">Ready</span>
+    </div>
+    <div class="footer-right">
+        <span class="footer-text">Nacht der Wissenschaft · Düsseldorf 2026</span>
+    </div>
+</footer>
 
 <script src="src/main.js" type="module"></script>
 </body>

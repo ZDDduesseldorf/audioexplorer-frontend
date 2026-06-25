@@ -30,20 +30,33 @@ body {
 
 /* ── Header ───────────────────────────────────────────────── */
 .app-header {
-    height: 48px;
+    height: 36px;
     background: var(--surface);
     border-bottom: 0.5px solid var(--border);
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
+    padding: 0 14px;
+    flex-shrink: 0;
 }
-.header-left { display: flex; align-items: center; gap: 10px; }
-.app-title { font-size: 14px; font-weight: 600; letter-weight: 0.5px; }
-.header-year { font-size: 11px; color: var(--text3); font-weight: 700; }
+.header-left { display: flex; align-items: center; gap: 8px; }
+.app-title { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; }
+.header-right { display: flex; align-items: center; gap: 12px; justify-self: end; }
+.header-year { font-size: 10px; color: var(--text3); font-weight: 700; }
+.header-stat { font-size: 10px; color: var(--text3); }
+
+.header-nav { display: flex; gap: 2px; justify-self: center; }
+.nav-btn {
+    background: transparent; border: none; color: var(--text3);
+    font-size: 11px; font-family: var(--font);
+    padding: 4px 10px; border-radius: 5px; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.nav-btn:hover { color: var(--text2); background: var(--surface2); }
+.nav-btn-active { color: var(--text); background: var(--surface2); }
 
 /* انیمیشن لوگوی موجی شکل در هدر */
-.logo-wave { display: flex; align-items: flex-end; gap: 2px; height: 16px; width: 35px; }
+.logo-wave { display: flex; align-items: flex-end; gap: 2px; height: 14px; width: 28px; }
 .logo-wave .bar {
     width: 2px; background: var(--accent); border-radius: 1px;
     animation: h-wave 0.8s ease-in-out infinite alternate;
@@ -52,6 +65,41 @@ body {
     0% { transform: scaleY(0.3); }
     100% { transform: scaleY(1); }
 }
+
+/* ── Footer ───────────────────────────────────────────────── */
+.app-footer {
+    height: 28px;
+    background: var(--surface);
+    border-top: 0.5px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 14px;
+    flex-shrink: 0;
+}
+.footer-left { display: flex; align-items: center; gap: 10px; }
+.footer-center { justify-self: center; }
+.footer-right { justify-self: end; }
+.footer-text { font-size: 10px; color: var(--text3); }
+.footer-link { font-size: 10px; color: var(--text2); text-decoration: none; }
+.footer-link:hover { color: var(--accent); }
+.footer-status { font-size: 10px; color: #10b981; }
+
+/* ── Filter Panel Header & Toggle ────────────────────────── */
+.panel-filters-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+}
+.panel-filters-header .panel-title { margin-bottom: 0; }
+.filter-close-btn {
+    width: 20px; height: 20px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text3); display: flex; align-items: center; justify-content: center;
+    border-radius: 4px; padding: 2px;
+    transition: background 0.15s, color 0.15s;
+}
+.filter-close-btn:hover { background: var(--surface2); color: var(--text); }
+.filter-close-btn svg { width: 12px; height: 12px; }
 
 /* ── Layout ───────────────────────────────────────────────── */
 .app-main {
@@ -167,3 +215,14 @@ body {
 .btn-secondary:hover { background: var(--border2); color: var(--text); }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-primary:hover { background: #3b66f0; }
+/* ── Filter Panel Hidden State ───────────────────────────── */
+.panel-filters.panel-hidden {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: none;
+    transition: width 0.2s ease, padding 0.2s ease;
+}
+.panel-filters {
+    transition: width 0.2s ease, padding 0.2s ease;
+}

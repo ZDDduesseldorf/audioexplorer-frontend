@@ -92,9 +92,47 @@ rightPanel.onConfirm = (label, note) => {
     filterPanel.rebuild(points);
     scatter.draw();
     rightPanel.update(p);
+    updateHeaderStats();
+    setFooterStatus(`Saved label "${label}" for #${p.sampleId}`);
 };
 
-// ۸. تعریف کلیدهای میانبر کیبورد (Keyboard Shortcuts)
+// ۸. آمار زنده در هدر
+function updateHeaderStats() {
+    const total = points.length;
+    const labeled = points.filter(p => p.annotated).length;
+    const hdrTotal = document.getElementById('hdr-total');
+    const hdrLabeled = document.getElementById('hdr-labeled');
+    if (hdrTotal) hdrTotal.textContent = `${total} samples`;
+    if (hdrLabeled) hdrLabeled.textContent = `${labeled} labeled`;
+}
+updateHeaderStats();
+
+// ۹. وضعیت پایین صفحه (Footer Status)
+function setFooterStatus(text) {
+    const el = document.getElementById('footer-status');
+    if (el) el.textContent = text;
+}
+
+// ۱۰. دکمه‌های navigation در هدر
+document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-btn-active'));
+        btn.classList.add('nav-btn-active');
+        setFooterStatus(`View: ${btn.dataset.view}`);
+    });
+});
+
+// ۱۱. دکمه X برای بستن پنل فیلترها
+const filterPanel2 = document.getElementById('filter-panel');
+const filterToggle = document.getElementById('filter-toggle');
+if (filterToggle && filterPanel2) {
+    filterToggle.addEventListener('click', () => {
+        filterPanel2.classList.toggle('panel-hidden');
+        scatter.draw();
+    });
+}
+
+// ۱۲. تعریف کلیدهای میانبر کیبورد (Keyboard Shortcuts)
 document.addEventListener('keydown', e => {
     // اگر کاربر در حال تایپ درون باکس کامنت یا سرچ است، کلیدهای میانبر کار نکنند
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
