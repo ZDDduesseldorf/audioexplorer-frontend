@@ -154,6 +154,11 @@ export function useGraphEngine(
 
       onHoverChangeRef.current?.(null, null);
       sigma.getContainer().style.cursor = "default";
+
+      if (isHoverAudioEnabledRef.current) {
+        stopAudio();
+      }
+
       sigma.refresh();
     };
 
@@ -161,6 +166,9 @@ export function useGraphEngine(
       selectedIdRef.current = node;
 
       showSelectedTooltipForNode(node);
+
+      //plays selected audio
+      playAudioByUuid(node);
 
       const point = points.find((p) => p.id === node);
       if (point) onNodeClickRef.current?.(point);

@@ -1,36 +1,26 @@
-import { Howl } from "howler";
+let currentAudio: HTMLAudioElement | null = null;
 
-// stores current active howler sound
-let currentSound: Howl | null = null;
-
-export function playAudioByUuid(uuid: string) {
-  // stop previous sound before playing a new one
-  if (currentSound) {
-    currentSound.stop();
-    currentSound.unload();
-  }
-
-  // creates new howler instance for selected audio file
-  currentSound = new Howl({
-    src: [`/api/v1/sounds/audio/${uuid}`],
-    html5: true,
-    onloaderror: (_soundId, error) => {
-      console.error("Audio could not be loaded", error);
-    },
-    onplayerror: (_soundId, error) => {
-      console.error("Audio could not be played", error);
-    },
-  });
-
-  // start playback
-  currentSound.play();
+// builds backend for selected audio file
+export function getAudioByUuid(uuid: string) {
+  return `/api/v1/sounds/audio/${uuid}`;
 }
 
-// stops current playing audio
-export function stopAudio() {
-  if (!currentSound) return;
+//plays audio for hover
+export function playAudioByUuid(uuid: string) {
+  stopAudio();
 
-  currentSound.stop();
-  currentSound.unload();
-  currentSound = null;
+  currentAudio = new Audio(getAudioByUuid(uuid));
+
+  currentAudio.play().catch((error) => {
+    console.error("Audio could not be played", error);
+  });
+}
+
+//stops current hover audio
+export function stopAudio() {
+  if (!currentAudio) return;
+
+  currentAudio.pause();
+  currentAudio.currentTime = 0;
+  currentAudio = null;
 }
