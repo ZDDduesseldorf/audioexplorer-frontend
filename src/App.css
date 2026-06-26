@@ -510,6 +510,7 @@
   height: 54px;
   padding: 6px 12px 6px 6px;
   margin: 14px 18px 18px;
+  overflow: hidden;
 }
 
 .audio-button {
@@ -527,6 +528,12 @@
   flex-shrink: 0;
 }
 
+.wavesurfer-container {
+  width: 130px;
+  height: 30px;
+  overflow: hidden;
+}
+
 .audio-button:hover {
   border-color: var(--color-orange);
 }
@@ -538,20 +545,13 @@
   font-variant-numeric: tabular-nums;
 }
 
-.audio-dummy-waveform {
+.audio-waveform {
   display: flex;
-  align-items: flex-end;
-  gap: 3px;
+  align-items: center;
+  justify-content: flex-start;
   height: 34px;
   flex: 1;
   overflow: hidden;
-}
-
-.audio-dummy-waveform-bar {
-  width: 12px;
-  background: var(--color-orange);
-  border-radius: 1px 1px 0 0;
-  flex-shrink: 0;
 }
 
 .detail-row {
