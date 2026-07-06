@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ALLOW_FEATURE_GHCR_PUSH: "true"
+      ALLOW_FEATURE_GHCR_PUSH: "false"
 
     steps:
       - name: Checkout repository
