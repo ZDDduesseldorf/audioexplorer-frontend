@@ -13,11 +13,15 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 jobs:
   frontend-pipeline:
     name: Frontend Pipeline
     runs-on: ubuntu-latest
+
+    env:
+      ALLOW_FEATURE_GHCR_PUSH: "true"
 
     steps:
       - name: Checkout repository
@@ -98,35 +102,71 @@ jobs:
             npm audit --audit-level=high
             echo "::endgroup::"
 
-      - name: 11 - Docker Build
+      - name: 10.1 - Read frontend version
         run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
 
-          echo "::group::Build Docker image"
-          docker build -t audioexplorer-frontend-app:${{ github.sha }} .
-          echo "::endgroup::"
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> "$GITHUB_ENV"
 
-          echo "::group::Inspect Docker image"
-          docker image inspect audioexplorer-frontend-app:${{ github.sha }}
-          echo "::endgroup::"
+          echo "Current frontend version: $CURRENT_VERSION"
+      
+      - name: 10.2 - Check frontend version change
+        id: version_check
+        run: |
+          git fetch origin main
 
-          echo "::group::Save Docker image as artifact file"
-          docker save audioexplorer-frontend-app:${{ github.sha }} | gzip > audioexplorer-frontend-image.tar.gz
-          ls -lh audioexplorer-frontend-image.tar.gz
-          echo "::endgroup::"
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            BASE_REF="${{ github.event.before }}"
+          else
+            BASE_REF="origin/main"
+          fi
 
-      - name: 12 - Upload Docker Image Artifact
-        uses: actions/upload-artifact@v4
+          PREVIOUS_VERSION=$(git show "$BASE_REF:package.json" | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
+
+          echo "Previous frontend version: $PREVIOUS_VERSION"
+          echo "Current frontend version: $CURRENT_VERSION"
+
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+            echo "Frontend version changed."
+          else
+            echo "version_changed=false" >> "$GITHUB_OUTPUT"
+            echo "Frontend version did not change."
+          fi
+
+      - name: 10.3 - Set Docker image name
+        run: |
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+
+          if [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+            IMAGE_NAME="ghcr.io/${OWNER}/audioexplorer-frontend"
+          else
+            IMAGE_NAME="ghcr.io/${OWNER}/audioexplorer-frontend-test"
+          fi
+
+          echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
+          echo "Image name: $IMAGE_NAME"
+
+      - name: 10.4 - Log in to GitHub Container Registry
+        if: github.event_name == 'push' && steps.version_check.outputs.version_changed == 'true' && (github.ref == 'refs/heads/main' || env.ALLOW_FEATURE_GHCR_PUSH == 'true')
+        uses: docker/login-action@v4
         with:
-          name: audioexplorer-frontend-image-${{ github.sha }}
-          path: audioexplorer-frontend-image.tar.gz
-          if-no-files-found: error
-          retention-days: 1
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 13 - Staging
-        run: echo "Schritt Staging ist erreicht"
-
-      - name: 14 - Deploy Staging
+      - name: 10.5 - Build and optionally push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: ${{ github.event_name == 'push' && steps.version_check.outputs.version_changed == 'true' && (github.ref == 'refs/heads/main' || env.ALLOW_FEATURE_GHCR_PUSH == 'true') }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ env.CURRENT_VERSION }}
+            ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+      
+      - name: 11 - Deploy Staging
         run: echo "Schritt Deploy Staging ist erreicht"
 
-      - name: 15 - Deploy Production
+      - name: 12 - Deploy Production
         run: echo "Schritt Deploy Production ist erreicht"
