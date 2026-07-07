@@ -1,32 +1,37 @@
 import { useState, useEffect } from "react";
-import type { PointData } from "../domain/types";
 import { fetchAudioData } from "../services/audioDataService";
+import { useAppStore } from "../store/useAppStore";
 
 interface AudioDataState {
-  data: PointData[];
   loading: boolean;
   error: Error | null;
 }
 
+// Fetches the dataset and puts it into the global store (points +
+// filteredPoints); loading/error stay local since only App shows them.
 export function useAudioData(datasetId: string): AudioDataState {
+  const setPoints = useAppStore((s) => s.setPoints);
+
   const [state, setState] = useState<AudioDataState>({
-    data: [],
     loading: true,
     error: null,
   });
 
   useEffect(() => {
-    setState({ data: [], loading: true, error: null });
+    setPoints([]);
+    setState({ loading: true, error: null });
     fetchAudioData(datasetId)
-      .then((data) => setState({ data, loading: false, error: null }))
+      .then((data) => {
+        setPoints(data);
+        setState({ loading: false, error: null });
+      })
       .catch((err) =>
         setState({
-          data: [],
           loading: false,
           error: err instanceof Error ? err : new Error(String(err)),
         }),
       );
-  }, [datasetId]);
+  }, [datasetId, setPoints]);
 
   return state;
 }

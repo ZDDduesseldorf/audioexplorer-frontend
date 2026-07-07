@@ -1,31 +1,40 @@
-export interface CategoryInfo {
+import { useMemo } from "react";
+import { useAppStore } from "../../store/useAppStore";
+import { getClusterColor } from "../../domain/clusters";
+
+interface CategoryInfo {
   name: string;
   count: number;
   color: string;
 }
 
-interface FilterSidebarProps {
-  categories: CategoryInfo[];
-  hiddenCategories: ReadonlySet<string>;
-  onToggleCategory: (name: string) => void;
-  onClose: () => void;
-}
+export function FilterSidebar() {
+  const { points, hiddenCategories, toggleCategory, setFilterSidebarOpen } =
+    useAppStore();
 
-export function FilterSidebar({
-  categories,
-  hiddenCategories,
-  onToggleCategory,
-  onClose,
-}: FilterSidebarProps) {
+  const categories = useMemo<CategoryInfo[]>(() => {
+    const counts = new Map<string, number>();
+    const clusters = new Map<string, number>();
+    for (const p of points) {
+      if (p.category == null) continue;
+      counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+      clusters.set(p.category, p.cluster);
+    }
+    return [...counts.keys()].sort().map((name) => ({
+      name,
+      count: counts.get(name)!,
+      color: getClusterColor(clusters.get(name)!),
+    }));
+  }, [points]);
+
   return (
     <aside className="filter-sidebar" aria-label="Filter sidebar">
       <div className="filter-header">
         <h2 className="filter-title">Filters</h2>
-
         <button
           className="filter-close-btn"
           type="button"
-          onClick={onClose}
+          onClick={() => setFilterSidebarOpen(false)}
           aria-label="Hide filter sidebar"
         >
           ←
@@ -52,7 +61,7 @@ export function FilterSidebar({
                 className="filter-checkbox"
                 type="checkbox"
                 checked={!hiddenCategories.has(name)}
-                onChange={() => onToggleCategory(name)}
+                onChange={() => toggleCategory(name)}
               />
             </div>
           </label>
