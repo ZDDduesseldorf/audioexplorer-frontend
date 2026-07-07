@@ -165,26 +165,33 @@
 .node-tooltip {
   position: absolute;
   pointer-events: none;
-  background: rgba(11, 8, 41, 0.95);
-  border: 1px solid var(--color-light-blue);
-  border-radius: 6px;
-  padding: 6px 10px;
   z-index: 100;
+  padding: 3px 10px;
+  border: 2px solid var(--color-orange);
+  border-radius: 999px;
+  background: var(--color-orange);
+  color: var(--color-dark-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   white-space: nowrap;
-  backdrop-filter: blur(6px);
+  transform: translate(-50%, calc(-100% - 12px));
 }
 
 .tooltip-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-cream);
-  margin-bottom: 2px;
+  margin: 0;
+  color: var(--color-dark-blue);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .tooltip-coords {
-  font-size: 11px;
-  color: var(--color-light-blue);
+  color: var(--color-dark-blue);
   font-family: "Courier New", monospace;
+  font-size: 10px;
+  line-height: 1.1;
 }
 
 /* ── Filter sidebar ──────────────────────────────────────── */
@@ -503,6 +510,7 @@
   height: 54px;
   padding: 6px 12px 6px 6px;
   margin: 14px 18px 18px;
+  overflow: hidden;
 }
 
 .audio-button {
@@ -520,6 +528,12 @@
   flex-shrink: 0;
 }
 
+.wavesurfer-container {
+  width: 130px;
+  height: 30px;
+  overflow: hidden;
+}
+
 .audio-button:hover {
   border-color: var(--color-orange);
 }
@@ -531,20 +545,13 @@
   font-variant-numeric: tabular-nums;
 }
 
-.audio-dummy-waveform {
+.audio-waveform {
   display: flex;
-  align-items: flex-end;
-  gap: 3px;
+  align-items: center;
+  justify-content: flex-start;
   height: 34px;
   flex: 1;
   overflow: hidden;
-}
-
-.audio-dummy-waveform-bar {
-  width: 12px;
-  background: var(--color-orange);
-  border-radius: 1px 1px 0 0;
-  flex-shrink: 0;
 }
 
 .detail-row {

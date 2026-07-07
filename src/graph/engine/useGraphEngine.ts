@@ -14,9 +14,14 @@ interface GraphEngineCallbacks {
     nodeId: string | null,
     position: { x: number; y: number } | null,
   ) => void;
+  onSelectedTooltipChange?: (
+    nodeId: string | null,
+    position: { x: number; y: number } | null,
+  ) => void;
 }
 
-const SELECTED_MULTIPLIER = 2.5;
+const HOVER_COLOR = "#F9DFC6";
+const SELECTED_COLOR = "#F9DFC6";
 
 export function useGraphEngine(
   containerRef: React.RefObject<HTMLDivElement | null>,
@@ -30,6 +35,7 @@ export function useGraphEngine(
 
   const nodeSizeRef = useRef(nodeSize);
   const selectedIdRef = useRef(selectedId);
+  const hoveredIdRef = useRef<string | null>(null);
 
   // stores whether hover audio is enabled
   const isHoverAudioEnabledRef = useRef(isHoverAudioEnabled);
@@ -38,6 +44,7 @@ export function useGraphEngine(
   const onNodeClickRef = useRef(callbacks.onNodeClick);
   const onStageClickRef = useRef(callbacks.onStageClick);
   const onHoverChangeRef = useRef(callbacks.onHoverChange);
+  const onSelectedTooltipChangeRef = useRef(callbacks.onSelectedTooltipChange);
 
   useEffect(() => {
     onNodeClickRef.current = callbacks.onNodeClick;
@@ -48,6 +55,9 @@ export function useGraphEngine(
   useEffect(() => {
     onHoverChangeRef.current = callbacks.onHoverChange;
   }, [callbacks.onHoverChange]);
+  useEffect(() => {
+    onSelectedTooltipChangeRef.current = callbacks.onSelectedTooltipChange;
+  }, [callbacks.onSelectedTooltipChange]);
 
   // if hover auio gets disabled -> stop sounds
   useEffect(() => {
@@ -74,6 +84,10 @@ export function useGraphEngine(
 
     const sigma = new Sigma(graph, containerRef.current, {
       renderLabels: false,
+      // We render our own React tooltip with label and coordinates.
+      // Disable Sigma's default hover label to avoid duplicate tooltips.
+      renderEdgeLabels: false,
+      defaultDrawNodeHover: () => {},
       defaultNodeType: "circle",
       defaultEdgeType: "line",
       hideEdgesOnMove: true,
@@ -83,53 +97,112 @@ export function useGraphEngine(
       maxCameraRatio: 10,
       nodeReducer: (node, data) => {
         const size = nodeSizeRef.current;
+
         if (node === selectedIdRef.current) {
           return {
             ...data,
-            size: size * SELECTED_MULTIPLIER,
-            color: "#FF8400",
+            size,
+            color: SELECTED_COLOR,
           };
         }
+
+        if (node === hoveredIdRef.current) {
+          return {
+            ...data,
+            size,
+            color: HOVER_COLOR,
+          };
+        }
+
         return { ...data, size };
       },
     });
 
+    const getNodeViewportPosition = (node: string) => {
+      const nodeData = graph.getNodeAttributes(node) as {
+        x: number;
+        y: number;
+      };
+
+      return sigma.graphToViewport({
+        x: nodeData.x,
+        y: nodeData.y,
+      });
+    };
+
+    const showHoverTooltipForNode = (node: string) => {
+      onHoverChangeRef.current?.(node, getNodeViewportPosition(node));
+    };
+
+    const showSelectedTooltipForNode = (node: string) => {
+      onSelectedTooltipChangeRef.current?.(node, getNodeViewportPosition(node));
+    };
+
     const adapter = new SigmaEngineAdapter(sigma);
 
-    const handleEnterNode = ({
-      node,
-      event,
-    }: {
-      node: string;
-      event: { x: number; y: number; original: MouseEvent | TouchEvent };
-    }) => {
-      onHoverChangeRef.current?.(node, { x: event.x, y: event.y });
+    const handleEnterNode = ({ node }: { node: string }) => {
+      hoveredIdRef.current = node;
+      showHoverTooltipForNode(node);
       sigma.getContainer().style.cursor = "pointer";
-
-      // only starts audio hover when both sidebars are closed
+      sigma.refresh();
       if (!isHoverAudioEnabledRef.current) return;
-
       playAudioByUuid(node);
     };
 
     const handleLeaveNode = () => {
+      hoveredIdRef.current = null;
+
       onHoverChangeRef.current?.(null, null);
       sigma.getContainer().style.cursor = "default";
+
+      if (isHoverAudioEnabledRef.current) {
+        stopAudio();
+      }
+
+      sigma.refresh();
     };
 
     const handleClickNode = ({ node }: { node: string }) => {
+      selectedIdRef.current = node;
+
+      showSelectedTooltipForNode(node);
+
+      //plays selected audio
+      playAudioByUuid(node);
+
       const point = points.find((p) => p.id === node);
       if (point) onNodeClickRef.current?.(point);
+
+      requestAnimationFrame(() => {
+        showSelectedTooltipForNode(node);
+      });
     };
 
     const handleClickStage = () => {
+      selectedIdRef.current = null;
+      hoveredIdRef.current = null;
+
+      onSelectedTooltipChangeRef.current?.(null, null);
+      onHoverChangeRef.current?.(null, null);
+
       onStageClickRef.current?.();
+    };
+
+    const updateActiveTooltipPosition = () => {
+      if (selectedIdRef.current) {
+        showSelectedTooltipForNode(selectedIdRef.current);
+      }
+
+      if (hoveredIdRef.current) {
+        showHoverTooltipForNode(hoveredIdRef.current);
+      }
     };
 
     sigma.on("enterNode", handleEnterNode);
     sigma.on("leaveNode", handleLeaveNode);
     sigma.on("clickNode", handleClickNode);
     sigma.on("clickStage", handleClickStage);
+    sigma.getCamera().on("updated", updateActiveTooltipPosition);
 
     setEngine(adapter);
 
@@ -138,6 +211,7 @@ export function useGraphEngine(
       sigma.removeListener("leaveNode", handleLeaveNode);
       sigma.removeListener("clickNode", handleClickNode);
       sigma.removeListener("clickStage", handleClickStage);
+      sigma.getCamera().removeListener("updated", updateActiveTooltipPosition);
       adapter.destroy();
       setEngine(null);
     };

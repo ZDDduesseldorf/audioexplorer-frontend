@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import type { PointData } from "../domain/types";
 import { useGraphEngine } from "../graph/engine/useGraphEngine";
 import { Minimap } from "../graph/minimap/Minimap";
@@ -23,6 +23,11 @@ export function GraphView({ points }: GraphViewProps) {
     null,
   );
 
+  const [selectedTooltipPos, setSelectedTooltipPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
   const handleHoverChange = useCallback(
     (nodeId: string | null, pos: { x: number; y: number } | null) => {
       setHoveredId(nodeId);
@@ -30,6 +35,19 @@ export function GraphView({ points }: GraphViewProps) {
     },
     [],
   );
+
+  const handleSelectedTooltipChange = useCallback(
+    (_nodeId: string | null, pos: { x: number; y: number } | null) => {
+      setSelectedTooltipPos(pos);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!selectedId) {
+      setSelectedTooltipPos(null);
+    }
+  }, [selectedId]);
 
   const engine = useGraphEngine(
     containerRef,
@@ -41,6 +59,7 @@ export function GraphView({ points }: GraphViewProps) {
       onNodeClick: (node: PointData) => select(node.id),
       onStageClick: clearSelection,
       onHoverChange: handleHoverChange,
+      onSelectedTooltipChange: handleSelectedTooltipChange,
     },
   );
 
@@ -51,11 +70,21 @@ export function GraphView({ points }: GraphViewProps) {
       <KNNOverlay engine={engine} hoveredId={hoveredId} points={points} />
       <Minimap engine={engine} points={points} />
 
-      {hoveredId && hoverPos && (
+      {selectedId && selectedTooltipPos && (
+        <NodeTooltip
+          hoveredId={selectedId}
+          position={selectedTooltipPos}
+          points={points}
+          variant="selected"
+        />
+      )}
+
+      {hoveredId && hoveredId !== selectedId && hoverPos && (
         <NodeTooltip
           hoveredId={hoveredId}
           position={hoverPos}
           points={points}
+          variant="hover"
         />
       )}
     </div>
