@@ -69,7 +69,12 @@ export function GraphView() {
     <div className="sigma-container" style={{ position: "relative" }}>
       <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
 
-      <KNNOverlay engine={engine} hoveredId={hoveredId} points={points} />
+      <KNNOverlay
+        engine={engine}
+        hoveredId={hoveredId}
+        selectedId={selectedId}
+        points={points}
+      />
       <Minimap engine={engine} points={points} />
 
       {selectedId && selectedTooltipPos && (
