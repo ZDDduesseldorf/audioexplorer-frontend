@@ -24,6 +24,7 @@ interface SoundOverview {
   category: string;
   filename: string;
   anomalie: boolean | null;
+  nearest_neighbors: Record<string, number>;
 }
 
 async function fetchFromJson(datasetId: string): Promise<PointData[]> {
@@ -56,6 +57,7 @@ async function fetchFromApi(): Promise<PointData[]> {
     category: p.category,
     filename: p.filename,
     anomalie: p.anomalie,
+    nearestNeighbors: p.nearest_neighbors,
   }));
 }
 

@@ -2,13 +2,15 @@ import type { PointData } from "../../domain/types";
 import { getClusterColor } from "../../domain/clusters";
 import { getAudioByUuid } from "../../services/audioPlayerService";
 import { AudioWaveform } from "./AudioWaveform";
+import { useAppStore } from "../../store/useAppStore";
 
 interface NodeDetailsProps {
   node: PointData | null;
-  onClose: () => void;
 }
 
-export function NodeDetails({ node, onClose }: NodeDetailsProps) {
+export function NodeDetails({ node }: NodeDetailsProps) {
+  const clearSelection = useAppStore((s) => s.clearSelection);
+
   if (!node) return null;
 
   const clusterColor = getClusterColor(node.cluster);
@@ -22,7 +24,7 @@ export function NodeDetails({ node, onClose }: NodeDetailsProps) {
         <h2>Point Details</h2>
         <button
           className="close-btn"
-          onClick={onClose}
+          onClick={clearSelection}
           aria-label="Close sidebar"
         >
           ✕
