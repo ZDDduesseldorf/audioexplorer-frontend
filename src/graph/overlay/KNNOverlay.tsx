@@ -1,9 +1,18 @@
 import { useEffect, useRef } from "react";
 import type { PointData } from "../../domain/types";
 import type { GraphEngine } from "../engine/GraphEngine";
-import { knnSearch } from "../../domain/spatialSearch";
 
 const KNN_K = 10;
+
+// The k nearest neighbor ids of a point, taken from the
+// backend-precomputed id -> distance map.
+function nearestNeighborIds(point: PointData, k: number): string[] {
+  if (!point.nearestNeighbors) return [];
+  return Object.entries(point.nearestNeighbors)
+    .sort(([, a], [, b]) => a - b)
+    .slice(0, k)
+    .map(([id]) => id);
+}
 
 interface KNNOverlayProps {
   engine: GraphEngine | null;
@@ -53,14 +62,12 @@ export function KNNOverlay({ engine, hoveredId, points }: KNNOverlayProps) {
       const id = hoveredIdRef.current;
       if (!id) return;
 
-      const src = engine.graphToViewport(
-        (() => {
-          const p = points.find((x) => x.id === id);
-          return p ? { x: p.x, y: p.y } : { x: 0, y: 0 };
-        })(),
-      );
+      const hovered = points.find((x) => x.id === id);
+      if (!hovered) return;
 
-      const neighbors = knnSearch(points, id, KNN_K);
+      const src = engine.graphToViewport({ x: hovered.x, y: hovered.y });
+
+      const neighbors = nearestNeighborIds(hovered, KNN_K);
       ctx.strokeStyle = "rgba(249,223,198,0.45)";
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -96,13 +103,12 @@ export function KNNOverlay({ engine, hoveredId, points }: KNNOverlayProps) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!hoveredId) return;
 
-    const src = (() => {
-      const p = points.find((x) => x.id === hoveredId);
-      return p ? engine.graphToViewport({ x: p.x, y: p.y }) : null;
-    })();
-    if (!src) return;
+    const hovered = points.find((x) => x.id === hoveredId);
+    if (!hovered) return;
 
-    const neighbors = knnSearch(points, hoveredId, KNN_K);
+    const src = engine.graphToViewport({ x: hovered.x, y: hovered.y });
+
+    const neighbors = nearestNeighborIds(hovered, KNN_K);
     ctx.strokeStyle = "rgba(249,223,198,0.45)";
     ctx.lineWidth = 1;
     ctx.beginPath();
