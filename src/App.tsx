@@ -1,8 +1,10 @@
-import { useState, useCallback, useMemo, ChangeEvent } from "react";
+import { useState, useCallback, useMemo, useEffect, ChangeEvent } from "react";
 import { GraphView } from "./components/GraphView";
 import { NodeDetails } from "./features/node-details/NodeDetails";
 import { FilterSidebar } from "./features/filters/FilterSidebar";
+import type { CategoryInfo } from "./features/filters/FilterSidebar";
 import { useAudioData } from "./hooks/useAudioData";
+import { getClusterColor } from "./domain/clusters";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { AboutPage } from "./components/AboutPage";
@@ -19,9 +21,59 @@ export default function App() {
 
   const [isFilterSidebarOpen, setIsFilterSidebarOpen] = useState(true);
 
+  const [hiddenCategories, setHiddenCategories] = useState<ReadonlySet<string>>(
+    new Set(),
+  );
+
+  const categories = useMemo<CategoryInfo[]>(() => {
+    const counts = new Map<string, number>();
+    const clusters = new Map<string, number>();
+    for (const p of points) {
+      if (p.category == null) continue;
+      counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+      clusters.set(p.category, p.cluster);
+    }
+    return [...counts.keys()].sort().map((name) => ({
+      name,
+      count: counts.get(name)!,
+      color: getClusterColor(clusters.get(name)!),
+    }));
+  }, [points]);
+
+  const visiblePoints = useMemo(
+    () =>
+      hiddenCategories.size === 0
+        ? points
+        : points.filter(
+            (p) => p.category == null || !hiddenCategories.has(p.category),
+          ),
+    [points, hiddenCategories],
+  );
+
+  const toggleCategory = useCallback((name: string) => {
+    setHiddenCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
+      return next;
+    });
+  }, []);
+
+  // Deselect a node when its category gets hidden.
+  useEffect(() => {
+    setSelectedNode((node) =>
+      node?.category != null && hiddenCategories.has(node.category)
+        ? null
+        : node,
+    );
+  }, [hiddenCategories]);
+
   const clusterCount = useMemo(
-    () => new Set(points.map((p) => p.cluster)).size,
-    [points],
+    () => new Set(visiblePoints.map((p) => p.cluster)).size,
+    [visiblePoints],
   );
 
   const handleNodeClick = useCallback(
@@ -42,7 +94,12 @@ export default function App() {
       ) : (
         <main className="app-layout">
           {isFilterSidebarOpen && (
-            <FilterSidebar onClose={() => setIsFilterSidebarOpen(false)} />
+            <FilterSidebar
+              categories={categories}
+              hiddenCategories={hiddenCategories}
+              onToggleCategory={toggleCategory}
+              onClose={() => setIsFilterSidebarOpen(false)}
+            />
           )}
 
           {!isFilterSidebarOpen && (
@@ -62,7 +119,7 @@ export default function App() {
                 <h1 className="app-title">Audio Explorer</h1>
                 {!loading && (
                   <span className="point-count">
-                    {points.length.toLocaleString()} sounds &middot;{" "}
+                    {visiblePoints.length.toLocaleString()} sounds &middot;{" "}
                     {clusterCount} clusters
                   </span>
                 )}
@@ -73,7 +130,7 @@ export default function App() {
                 )}
               </div>
               <GraphView
-                points={points}
+                points={visiblePoints}
                 selectedId={selectedNode?.id ?? null}
                 nodeSize={nodeSize}
                 isHoverAudioEnabled={!selectedNode && !isFilterSidebarOpen}
