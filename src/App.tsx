@@ -10,9 +10,11 @@ import { useAppStore } from "./store/useAppStore";
 import "./App.css";
 
 export default function App() {
-  const { data: points, loading, error } = useAudioData("data-5k");
+  const { loading, error } = useAudioData("data-5k");
 
   const {
+    points,
+    filteredPoints,
     selectedId,
     nodeSize,
     setNodeSize,
@@ -26,8 +28,8 @@ export default function App() {
   );
 
   const clusterCount = useMemo(
-    () => new Set(points.map((p) => p.cluster)).size,
-    [points],
+    () => new Set(filteredPoints.map((p) => p.cluster)).size,
+    [filteredPoints],
   );
 
   // showAboutPage stays local — only App + Header use it
@@ -63,7 +65,7 @@ export default function App() {
                 <h1 className="app-title">Audio Explorer</h1>
                 {!loading && (
                   <span className="point-count">
-                    {points.length.toLocaleString()} sounds &middot;{" "}
+                    {filteredPoints.length.toLocaleString()} sounds &middot;{" "}
                     {clusterCount} clusters
                   </span>
                 )}
@@ -74,7 +76,7 @@ export default function App() {
                 )}
               </div>
 
-              <GraphView points={points} />
+              <GraphView />
 
               <div className="size-control">
                 <label className="size-label">Size</label>

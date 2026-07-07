@@ -6,15 +6,17 @@ import { KNNOverlay } from "../graph/overlay/KNNOverlay";
 import { NodeTooltip } from "../features/tooltip/NodeTooltip";
 import { useAppStore } from "../store/useAppStore";
 
-interface GraphViewProps {
-  points: PointData[];
-}
-
-export function GraphView({ points }: GraphViewProps) {
+export function GraphView() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { selectedId, nodeSize, isFilterSidebarOpen, select, clearSelection } =
-    useAppStore();
+  const {
+    filteredPoints: points,
+    selectedId,
+    nodeSize,
+    isFilterSidebarOpen,
+    select,
+    clearSelection,
+  } = useAppStore();
 
   const isHoverAudioEnabled = !selectedId && !isFilterSidebarOpen;
 

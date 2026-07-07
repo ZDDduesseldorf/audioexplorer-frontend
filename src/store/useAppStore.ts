@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { PointData } from "../domain/types";
 
 interface Filters {
   showLabeled: boolean;
@@ -7,7 +8,19 @@ interface Filters {
   searchTerm: string;
 }
 
+// Central place for the filter logic. The filters are placeholders for
+// now, so the filtered set is identical to the full set; once real
+// filter logic lands, this takes the Filters as a second argument.
+function applyFilters(points: PointData[]): PointData[] {
+  return points;
+}
+
 interface AppState {
+  // --- Data ---
+  points: PointData[]; // full set, as loaded from the API
+  filteredPoints: PointData[]; // derived: points minus active filters
+  setPoints: (points: PointData[]) => void;
+
   // --- Selection ---
   selectedId: string | null;
   select: (id: string) => void;
@@ -21,12 +34,21 @@ interface AppState {
   isFilterSidebarOpen: boolean;
   setFilterSidebarOpen: (open: boolean) => void;
 
-  // --- Filters (structure ready, not yet wired to graph) ---
+  // --- Filters (recompute filteredPoints; logic itself still placeholder) ---
   filters: Filters;
   setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  // Data
+  points: [],
+  filteredPoints: [],
+  setPoints: (points) =>
+    set({
+      points,
+      filteredPoints: applyFilters(points),
+    }),
+
   // Selection
   selectedId: null,
   select: (id) => set({ selectedId: id }),
@@ -50,5 +72,6 @@ export const useAppStore = create<AppState>((set) => ({
   setFilter: (key, value) =>
     set((state) => ({
       filters: { ...state.filters, [key]: value },
+      filteredPoints: applyFilters(state.points),
     })),
 }));
