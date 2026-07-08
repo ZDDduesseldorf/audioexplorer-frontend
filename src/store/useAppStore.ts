@@ -1,18 +1,16 @@
 import { create } from "zustand";
 import type { PointData } from "../domain/types";
 
-interface Filters {
-  showLabeled: boolean;
-  showUnlabeled: boolean;
-  showTestLabel: boolean;
-  searchTerm: string;
-}
-
-// Central place for the filter logic. The filters are placeholders for
-// now, so the filtered set is identical to the full set; once real
-// filter logic lands, this takes the Filters as a second argument.
-function applyFilters(points: PointData[]): PointData[] {
-  return points;
+// Central place for the filter logic: points whose category is hidden
+// are filtered out; points without a category are always visible.
+function applyFilters(
+  points: PointData[],
+  hiddenCategories: ReadonlySet<string>,
+): PointData[] {
+  if (hiddenCategories.size === 0) return points;
+  return points.filter(
+    (p) => p.category == null || !hiddenCategories.has(p.category),
+  );
 }
 
 interface AppState {
@@ -34,9 +32,9 @@ interface AppState {
   isFilterSidebarOpen: boolean;
   setFilterSidebarOpen: (open: boolean) => void;
 
-  // --- Filters (recompute filteredPoints; logic itself still placeholder) ---
-  filters: Filters;
-  setFilter: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
+  // --- Filters ---
+  hiddenCategories: ReadonlySet<string>;
+  toggleCategory: (name: string) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -44,10 +42,10 @@ export const useAppStore = create<AppState>((set) => ({
   points: [],
   filteredPoints: [],
   setPoints: (points) =>
-    set({
+    set((state) => ({
       points,
-      filteredPoints: applyFilters(points),
-    }),
+      filteredPoints: applyFilters(points, state.hiddenCategories),
+    })),
 
   // Selection
   selectedId: null,
@@ -63,15 +61,27 @@ export const useAppStore = create<AppState>((set) => ({
   setFilterSidebarOpen: (open) => set({ isFilterSidebarOpen: open }),
 
   // Filters
-  filters: {
-    showLabeled: true,
-    showUnlabeled: true,
-    showTestLabel: true,
-    searchTerm: "",
-  },
-  setFilter: (key, value) =>
-    set((state) => ({
-      filters: { ...state.filters, [key]: value },
-      filteredPoints: applyFilters(state.points),
-    })),
+  hiddenCategories: new Set<string>(),
+  toggleCategory: (name) =>
+    set((state) => {
+      const hiddenCategories = new Set(state.hiddenCategories);
+      if (hiddenCategories.has(name)) {
+        hiddenCategories.delete(name);
+      } else {
+        hiddenCategories.add(name);
+      }
+
+      // Deselect the node when its category gets hidden.
+      const selected = state.points.find((p) => p.id === state.selectedId);
+      const selectedId =
+        selected?.category != null && hiddenCategories.has(selected.category)
+          ? null
+          : state.selectedId;
+
+      return {
+        hiddenCategories,
+        filteredPoints: applyFilters(state.points, hiddenCategories),
+        selectedId,
+      };
+    }),
 }));

@@ -1,7 +1,31 @@
+import { useMemo } from "react";
 import { useAppStore } from "../../store/useAppStore";
+import { getClusterColor } from "../../domain/clusters";
+
+interface CategoryInfo {
+  name: string;
+  count: number;
+  color: string;
+}
 
 export function FilterSidebar() {
-  const { filters, setFilter, setFilterSidebarOpen } = useAppStore();
+  const { points, hiddenCategories, toggleCategory, setFilterSidebarOpen } =
+    useAppStore();
+
+  const categories = useMemo<CategoryInfo[]>(() => {
+    const counts = new Map<string, number>();
+    const clusters = new Map<string, number>();
+    for (const p of points) {
+      if (p.category == null) continue;
+      counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+      clusters.set(p.category, p.cluster);
+    }
+    return [...counts.keys()].sort().map((name) => ({
+      name,
+      count: counts.get(name)!,
+      color: getClusterColor(clusters.get(name)!),
+    }));
+  }, [points]);
 
   return (
     <aside className="filter-sidebar" aria-label="Filter sidebar">
@@ -18,63 +42,30 @@ export function FilterSidebar() {
       </div>
 
       <section className="filter-section">
-        <label className="filter-option">
-          <span>labeled</span>
-          <input
-            className="filter-checkbox"
-            type="checkbox"
-            checked={filters.showLabeled}
-            onChange={(e) => setFilter("showLabeled", e.target.checked)}
-          />
-        </label>
+        <h3 className="filter-section-title">Categories</h3>
 
-        <label className="filter-option">
-          <span>unlabeled</span>
-          <input
-            className="filter-checkbox"
-            type="checkbox"
-            checked={filters.showUnlabeled}
-            onChange={(e) => setFilter("showUnlabeled", e.target.checked)}
-          />
-        </label>
-      </section>
+        {categories.map(({ name, count, color }) => (
+          <label key={name} className="filter-option">
+            <span className="filter-option-label">
+              <span
+                className="filter-category-dot"
+                style={{ background: color }}
+              />
+              {name}
+            </span>
 
-      <section className="filter-section filter-label-section">
-        <h3 className="filter-section-title">Filter by Label</h3>
-        <label className="filter-option">
-          <span>test label</span>
-          <div className="filter-option-controls">
-            <span className="filter-count">xx</span>
-            <input
-              className="filter-checkbox"
-              type="checkbox"
-              checked={filters.showTestLabel}
-              onChange={(e) => setFilter("showTestLabel", e.target.checked)}
-            />
-          </div>
-        </label>
-      </section>
+            <div className="filter-option-controls">
+              <span className="filter-count">{count.toLocaleString()}</span>
 
-      <section className="filter-section filter-search-section">
-        <h3 className="filter-section-title">Search</h3>
-        <label className="filter-search">
-          <svg
-            className="filter-search-icon"
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="11" cy="11" r="6" />
-            <path d="M16 16L21 21" />
-          </svg>
-          <input
-            className="filter-search-input"
-            type="search"
-            value={filters.searchTerm}
-            onChange={(e) => setFilter("searchTerm", e.target.value)}
-            placeholder="Search label"
-            aria-label="Search label"
-          />
-        </label>
+              <input
+                className="filter-checkbox"
+                type="checkbox"
+                checked={!hiddenCategories.has(name)}
+                onChange={() => toggleCategory(name)}
+              />
+            </div>
+          </label>
+        ))}
       </section>
     </aside>
   );

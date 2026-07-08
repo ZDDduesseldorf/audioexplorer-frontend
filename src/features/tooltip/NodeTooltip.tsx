@@ -26,7 +26,10 @@ export function NodeTooltip({
         top: position.y,
       }}
     >
-      <div className="tooltip-label">{point.label}</div>
+      <div className="tooltip-category">{point.category ?? point.label}</div>
+      {point.category != null && (
+        <div className="tooltip-label">{point.label}</div>
+      )}
     </div>
   );
 }
