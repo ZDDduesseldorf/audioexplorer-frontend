@@ -37,7 +37,7 @@ export function FilterSidebar() {
           onClick={() => setFilterSidebarOpen(false)}
           aria-label="Hide filter sidebar"
         >
-          ←
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
 

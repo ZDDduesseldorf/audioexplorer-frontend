@@ -206,39 +206,22 @@
 .filter-sidebar {
   width: 300px;
   height: 100%;
+  min-height: 0;
   flex-shrink: 0;
-  padding: 20px 22px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--color-dark-blue);
   border: 2px solid var(--color-light-blue);
   border-radius: 16px;
 }
 
-.filter-close-btn {
-  width: 30px;
-  height: 30px;
+.filter-sidebar,
+.sidebar {
   padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: 2px solid var(--color-orange);
-  border-radius: 50%;
-  color: var(--color-light-blue);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-
-  transition:
-    color 0.15s,
-    background 0.15s,
-    border-color 0.15s;
-}
-
-.filter-close-btn:hover {
-  color: var(--color-cream);
-  background: var(--color-orange);
-  border-color: var(--color-orange);
+  scrollbar-gutter: stable;
 }
 
 .filter-open-btn {
@@ -272,28 +255,13 @@
   color: var(--color-dark-blue);
 }
 
-.filter-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 2px solid var(--color-light-blue);
-}
-
-.filter-title {
-  margin: 0;
-  color: var(--color-cream);
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
 .filter-section {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  box-sizing: border-box;
   margin-top: 22px;
+  padding: 0 16px 20px;
 }
 
 .filter-section-title {
@@ -387,223 +355,422 @@
   outline-offset: 3px;
 }
 
-/* ── Label Sidebar ─────────────────────────────────────────────── */
+/* ── Selected sample Sidebar ─────────────────────────────────────────────── */
 .sidebar {
   width: 300px;
   height: 100%;
   flex-shrink: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--color-dark-blue);
   border: 2px solid var(--color-light-blue);
   border-radius: 16px;
 }
 
+/* ── Shared sidebar headers ──────────────────────────────── */
+
+.filter-header,
 .sidebar-header {
+  position: relative;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  position: relative;
+  gap: 12px;
+
+  min-height: 56px;
+  box-sizing: border-box;
+
+  padding: 12px 14px 12px 16px;
+
+  /* The separator is created with ::after instead. */
+  border-bottom: none;
 }
 
+.filter-header::after,
 .sidebar-header::after {
   content: "";
+
   position: absolute;
-  left: 18px;
-  right: 18px;
+  right: 10px;
   bottom: 0;
-  height: 2px;
+  left: 10px;
+
+  height: 1px;
+
   background: var(--color-light-blue);
 }
 
+.filter-title,
 .sidebar-header h2 {
   margin: 0;
+
+  color: var(--color-light-blue);
   font-size: 18px;
   font-weight: 700;
-  color: var(--color-cream);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
 }
 
+/* ── Shared sidebar header buttons ───────────────────────── */
+.filter-close-btn,
 .close-btn {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
   padding: 0;
-  padding-bottom: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
   background: transparent;
+  color: var(--color-light-blue);
+
   border: 2px solid var(--color-orange);
   border-radius: 50%;
-  color: var(--color-light-blue);
-  font-size: 15px;
+
+  font-family: inherit;
+  font-size: 18px;
   line-height: 1;
+
   cursor: pointer;
+
   transition:
-    color 0.15s,
-    background 0.15s,
-    border-color 0.15s;
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
 }
 
+.filter-close-btn:hover,
 .close-btn:hover {
-  color: var(--color-cream);
   background: var(--color-orange);
   border-color: var(--color-orange);
+  color: var(--color-dark-blue);
+  transform: scale(1.04);
 }
 
-.sidebar-section {
-  padding: 14px 18px 18px;
+.filter-close-btn:focus-visible,
+.close-btn:focus-visible {
+  outline: 2px solid var(--color-cream);
+  outline-offset: 3px;
 }
 
-.sidebar-divider {
-  height: 1px;
-  background: var(--color-dark-blue);
-  margin: 0 20px;
+.filter-close-btn span,
+.close-btn span {
+  display: block;
+  line-height: 1;
+  transform: translateY(1px);
 }
 
-.section-title {
-  margin: 0 0 12px 0;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--color-cream);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
 
-/* Audio Playback */
+/* Audio player */
 .audio-player {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 7px;
+  height: 38px;
+  min-height: 38px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  margin: 14px 14px 16px;
+  padding: 4px 9px 4px 5px;
+  overflow: hidden;
   background: var(--color-cream);
   border-radius: 999px;
-  height: 54px;
-  padding: 6px 12px 6px 6px;
-  margin: 14px 18px 18px;
-  overflow: hidden;
 }
 
 .audio-button {
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 30px;
   border: 2px solid transparent;
-  border-radius: 999px;
-  background-color: var(--color-dark-blue);
+  border-radius: 50%;
+  background: var(--color-dark-blue);
   color: var(--color-light-blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 12px;
+  line-height: 1;
   cursor: pointer;
   flex-shrink: 0;
+  padding: 0;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .wavesurfer-container {
-  width: 130px;
+  width: 100%;
   height: 30px;
   overflow: hidden;
 }
 
 .audio-button:hover {
+  color: var(--color-orange);
   border-color: var(--color-orange);
 }
 
+.audio-button:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
 .audio-time {
-  font-size: 0.95rem;
+  font-size: 12px;
   color: var(--color-dark-blue);
-  min-width: 44px;
+  min-width: 40px;
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
 
 .audio-waveform {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 34px;
+  height: 30px;
   flex: 1;
   overflow: hidden;
+  min-width: 0;
 }
 
-.detail-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--color-light-blue);
-  gap: 12px;
-}
+/* ── Sample metadata table ───────────────────────────────── */
 
-.detail-row:last-child {
-  border-bottom: none;
-}
-
-.detail-label {
-  font-size: 12px;
-  color: var(--color-light-blue);
+.sample-details {
+  margin: 0 10px;
   flex-shrink: 0;
 }
 
-.detail-value {
+.details-table {
+  width: 100%;
+
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  color: var(--color-light-blue);
   font-size: 14px;
-  color: var(--color-cream);
-  font-weight: 500;
-  text-align: right;
-  word-break: break-all;
 }
 
-.cluster-badge {
-  display: inline-block;
-  padding: 1px 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  background: var(--color-orange);
-  color: var(--color-dark-blue);
-  min-width: 24px;
+.details-table th,
+.details-table td {
+  height: 36px;
+  box-sizing: border-box;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--color-light-blue);
+
   text-align: center;
+  vertical-align: middle;
+
+  overflow-wrap: anywhere;
+}
+
+.details-table th {
+  width: 52%;
+
+  color: var(--color-light-blue);
+  font-weight: 400;
+}
+
+.details-table td {
+  width: 48%;
+
+  color: var(--color-light-blue);
+  font-weight: 400;
+}
+
+.details-table .interactive-detail-row th,
+.details-table .interactive-detail-row td {
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.details-table .interactive-detail-row:hover th,
+.details-table .interactive-detail-row:hover td {
+  background: rgba(249, 223, 198, 0.42);
+  color: var(--color-cream);
 }
 
 /* ── Annotation section ──────────────────────────────────── */
 .annotation-section {
-  padding: 4px 18px 18px;
+  margin-top: 45px;
+  padding: 0 10px 18px;
+  flex-shrink: 0;
+}
+
+.annotation-title {
+  margin: 0 6px 12px;
+  color: var(--color-light-blue);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .annotation-divider {
   width: 100%;
   height: 1px;
+  margin-bottom: 12px;
   background: var(--color-light-blue);
 }
 
-.annotation-title {
-  margin: 12px 0;
-  color: var(--color-cream);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
+/* ── Annotation status ───────────────────────────────────── */
 
-/* ── Feature bar ─────────────────────────────────────────── */
-.feature-bar-wrap {
+.annotation-status-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 0 6px;
 }
 
-.feature-bar {
-  height: 6px;
-  border-radius: 3px;
-  min-width: 4px;
-  max-width: 80px;
-  opacity: 0.85;
-  transition: width 0.3s ease;
+.annotation-label {
+  color: var(--color-light-blue);
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.feature-bar-wrap .detail-value {
-  flex-shrink: 0;
-  min-width: 36px;
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 24px;
+  box-sizing: border-box;
+  padding: 2px 5px;
+
+  background: transparent;
+  border: 2px solid;
+  border-radius: 8px;
+
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-badge.categorized {
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
+.status-badge.uncategorized {
+  color: var(--color-light-blue);
+  border-color: var(--color-light-blue);
+}
+
+/* ── Category selection ──────────────────────────────────── */
+
+.category-label {
+  display: block;
+  margin: 14px 6px 8px;
+}
+
+.category-select {
+  width: 100%;
+  height: 34px;
+  box-sizing: border-box;
+
+  padding: 5px 9px;
+
+  background: var(--color-cream);
+  color: var(--color-dark-blue);
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.category-select:hover {
+  outline: 1px solid var(--color-orange);
+}
+
+.category-select:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+/* ── Annotation buttons ──────────────────────────────────── */
+
+.annotation-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.confirm-btn,
+.next-btn {
+  min-height: 28px;
+  box-sizing: border-box;
+
+  padding: 4px 8px;
+
+  border: 2px solid var(--color-orange);
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.confirm-btn {
+  background: var(--color-orange);
+  color: var(--color-white);
+}
+
+.confirm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.confirm-btn:not(:disabled):hover {
+  background: var(--color-light-blue);
+  border-color: var(--color-light-blue);
+  color: var(--color-dark-blue);
+  filter: none;
+}
+
+.next-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+
+  background: transparent;
+  color: var(--color-orange);
+}
+
+.next-btn:hover {
+  background: var(--color-light-blue);
+  border-color: var(--color-light-blue);
+  color: var(--color-dark-blue);
+}
+
+.confirm-btn:focus-visible,
+.next-btn:focus-visible {
+  outline: 2px solid var(--color-cream);
+  outline-offset: 3px;
 }
 
 /* ── Header ──────────────────────────────────────────────── */
@@ -691,4 +858,51 @@
   justify-content: center;
   padding: 24px;
   background: var(--color-dark-blue);
+}
+
+@media (max-height: 760px) {
+  .filter-header,
+  .sidebar-header {
+    min-height: 52px;
+    padding: 9px 14px 9px 16px;
+  }
+
+  .filter-section {
+    margin-top: 18px;
+    padding-bottom: 14px;
+  }
+
+  .audio-player {
+    margin-top: 12px;
+    margin-bottom: 14px;
+  }
+
+  .details-table th,
+  .details-table td {
+    height: 34px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .annotation-section {
+    margin-top: 22px;
+    padding-bottom: 14px;
+  }
+
+  .annotation-title {
+    margin-bottom: 10px;
+  }
+
+  .annotation-divider {
+    margin-bottom: 10px;
+  }
+
+  .category-label {
+    margin-top: 12px;
+    margin-bottom: 7px;
+  }
+
+  .annotation-actions {
+    margin-top: 12px;
+  }
 }

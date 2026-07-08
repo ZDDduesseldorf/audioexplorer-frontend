@@ -1,8 +1,8 @@
 import type { PointData } from "../../domain/types";
-import { getClusterColor } from "../../domain/clusters";
 import { getAudioByUuid } from "../../services/audioPlayerService";
 import { AudioWaveform } from "./AudioWaveform";
 import { useAppStore } from "../../store/useAppStore";
+import { useEffect, useMemo, useState } from "react";
 
 interface NodeDetailsProps {
   node: PointData | null;
@@ -10,24 +10,80 @@ interface NodeDetailsProps {
 
 export function NodeDetails({ node }: NodeDetailsProps) {
   const clearSelection = useAppStore((s) => s.clearSelection);
+  const points = useAppStore((state) => state.points);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  // Creates a list of all categories returned by the backend.
+  const categories = useMemo(() => {
+    const categorySet = new Set<string>();
 
-  if (!node) return null;
+    points.forEach((point) => {
+      const category = point.category?.trim();
 
-  const clusterColor = getClusterColor(node.cluster);
+      if (category) {
+        categorySet.add(category);
+      }
+    });
 
-  // request files from backend for wavesurfer
+    return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
+  }, [points]);
+
+  // Selects the current category whenever a different sample is opened.
+  useEffect(() => {
+    setSelectedCategory(node?.category?.trim() ?? "");
+  }, [node?.id, node?.category]);
+
+  if (!node) {
+    return null;
+  }
+
+  // Requests the audio file from the backend.
   const audioUrl = getAudioByUuid(node.id);
+
+  // Uses the category provided by the backend.
+  const currentCategory = node.category?.trim() || "Uncategorized";
+
+  const isCategorized = Boolean(node.category?.trim());
+
+  // Temporary dummy data until the remaining backend routes are connected.
+  const sampleDetails = {
+    description: "Giggle",
+    dataSource: "DS xy",
+    anomaly1: "0.02",
+    anomaly2: "4.00",
+  };
+
+  function handleConfirm() {
+    if (!selectedCategory) {
+      return;
+    }
+
+    console.log("Dummy confirm:", {
+      sampleId: node.id,
+      previousCategory: node.category,
+      selectedCategory,
+    });
+
+    // TODO: Save the selected category through the backend.
+  }
+
+  function handleNext() {
+    console.log("Dummy next sample");
+
+    // TODO: Select the next sample.
+  }
 
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h2>Point Details</h2>
+        <h2>Selected sample</h2>
+
         <button
+          type="button"
           className="close-btn"
           onClick={clearSelection}
           aria-label="Close sidebar"
         >
-          ✕
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
 
@@ -35,37 +91,90 @@ export function NodeDetails({ node }: NodeDetailsProps) {
         <AudioWaveform audioUrl={audioUrl} />
       </div>
 
-      <div className="sidebar-section">
-        <div className="detail-row">
-          <span className="detail-label">ID</span>
-          <span className="detail-value">#{node.id}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Label</span>
-          <span className="detail-value">{node.label}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">X</span>
-          <span className="detail-value">{node.x.toFixed(3)}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Y</span>
-          <span className="detail-value">{node.y.toFixed(3)}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Cluster</span>
+      <div className="sample-details">
+        <table className="details-table">
+          <tbody>
+            <tr>
+              <th scope="row">Category</th>
+              <td>{currentCategory}</td>
+            </tr>
+
+            <tr>
+              <th scope="row">Description</th>
+              <td>{sampleDetails.description}</td>
+            </tr>
+
+            <tr className="interactive-detail-row">
+              <th scope="row">Data source</th>
+              <td>{sampleDetails.dataSource}</td>
+            </tr>
+
+            <tr className="interactive-detail-row">
+              <th scope="row">Anomaly 1</th>
+              <td>{sampleDetails.anomaly1}</td>
+            </tr>
+
+            <tr className="interactive-detail-row">
+              <th scope="row">Anomaly 2</th>
+              <td>{sampleDetails.anomaly2}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="annotation-section">
+        <h3 className="annotation-title">Annotation</h3>
+
+        <div className="annotation-divider" />
+
+        <div className="annotation-status-row">
+          <span className="annotation-label">Current Status</span>
+
           <span
-            className="detail-value cluster-badge"
-            style={{ backgroundColor: clusterColor }}
+            className={`status-badge ${
+              isCategorized ? "categorized" : "uncategorized"
+            }`}
           >
-            {node.cluster}
+            {isCategorized ? "Categorized" : "Uncategorized"}
           </span>
         </div>
-      </div>
-      <div className="annotation-section">
-        <div className="annotation-divider" />
-        <h3 className="annotation-title">Annotation</h3>
-        <div className="annotation-divider" />
+
+        <label
+          className="annotation-label category-label"
+          htmlFor="category-select"
+        >
+          Category
+        </label>
+
+        <select
+          id="category-select"
+          className="category-select"
+          value={selectedCategory}
+          onChange={(event) => setSelectedCategory(event.target.value)}
+        >
+          <option value="">Choose a category</option>
+
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+
+        <div className="annotation-actions">
+          <button
+            type="button"
+            className="confirm-btn"
+            onClick={handleConfirm}
+            disabled={!selectedCategory}
+          >
+            Confirm
+          </button>
+
+          <button type="button" className="next-btn" onClick={handleNext}>
+            Next <span aria-hidden="true">▶</span>
+          </button>
+        </div>
       </div>
     </div>
   );
