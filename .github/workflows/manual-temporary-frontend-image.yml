@@ -8,9 +8,6 @@ on:
         required: true
         type: string
 
-  schedule:
-    - cron: "17 * * * *"
-
 permissions:
   contents: read
   packages: write
@@ -18,7 +15,6 @@ permissions:
 jobs:
   publish-temporary-frontend-image:
     name: Publish Temporary Frontend Image
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     concurrency:
@@ -77,12 +73,15 @@ jobs:
 
           if [ "$OWNER_TYPE" = "Organization" ]; then
             PACKAGE_API="/orgs/${OWNER}/packages/container/${PACKAGE_NAME}/versions"
+            PACKAGE_ROOT_API="/orgs/${OWNER}/packages/container/${PACKAGE_NAME}"
           else
             PACKAGE_API="/users/${OWNER}/packages/container/${PACKAGE_NAME}/versions"
+            PACKAGE_ROOT_API="/users/${OWNER}/packages/container/${PACKAGE_NAME}"
           fi
 
           echo "Package API: $PACKAGE_API"
-          echo "Searching for existing image with tag: $MANAGEMENT_TAG"
+          echo "Package root API: $PACKAGE_ROOT_API"
+          echo "Searching for existing temporary image with tag: $MANAGEMENT_TAG"
 
           set +e
           gh api --paginate --slurp "${PACKAGE_API}?per_page=100" > versions.json 2> api_error.log
@@ -112,7 +111,26 @@ jobs:
 
           for VERSION_ID in $VERSION_IDS; do
             echo "Deleting existing package version: $VERSION_ID"
-            gh api --method DELETE "${PACKAGE_API}/${VERSION_ID}"
+
+            set +e
+            gh api --method DELETE "${PACKAGE_API}/${VERSION_ID}" 2> delete_error.log
+            DELETE_STATUS=$?
+            set -e
+
+            if [ "$DELETE_STATUS" -eq 0 ]; then
+              echo "Deleted package version: $VERSION_ID"
+              continue
+            fi
+
+            if grep -q "last tagged version of a package" delete_error.log; then
+              echo "This is the last tagged version of the package."
+              echo "Deleting the whole temporary package instead."
+              gh api --method DELETE "${PACKAGE_ROOT_API}"
+              exit 0
+            fi
+
+            cat delete_error.log
+            exit 1
           done
 
       - name: 03 - Log in to GitHub Container Registry
@@ -135,65 +153,3 @@ jobs:
             ${{ env.IMAGE_NAME }}:${{ env.INPUT_TAG }}
             ${{ env.IMAGE_NAME }}:${{ env.MANAGEMENT_TAG }}
             ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
-
-  cleanup-expired-temporary-frontend-images:
-    name: Cleanup Expired Temporary Frontend Images
-    if: github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-
-    env:
-      PACKAGE_NAME: audioexplorer-frontend-manual
-
-    steps:
-      - name: Delete temporary frontend images older than 24 hours
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-
-          OWNER="${GITHUB_REPOSITORY_OWNER}"
-
-          OWNER_TYPE="$(gh api "/users/${OWNER}" --jq '.type')"
-
-          if [ "$OWNER_TYPE" = "Organization" ]; then
-            PACKAGE_API="/orgs/${OWNER}/packages/container/${PACKAGE_NAME}/versions"
-          else
-            PACKAGE_API="/users/${OWNER}/packages/container/${PACKAGE_NAME}/versions"
-          fi
-
-          CUTOFF_SECONDS="$(date -u -d '24 hours ago' +%s)"
-
-          echo "Package API: $PACKAGE_API"
-          echo "Deleting temporary images created before: $(date -u -d "@${CUTOFF_SECONDS}" '+%Y-%m-%dT%H:%M:%SZ')"
-
-          set +e
-          gh api --paginate --slurp "${PACKAGE_API}?per_page=100" > versions.json 2> api_error.log
-          API_STATUS=$?
-          set -e
-
-          if [ "$API_STATUS" -ne 0 ]; then
-            if grep -q "HTTP 404" api_error.log; then
-              echo "Package does not exist yet. Nothing to clean up."
-              exit 0
-            fi
-
-            cat api_error.log
-            exit 1
-          fi
-
-          VERSION_IDS="$(jq -r --argjson cutoff "$CUTOFF_SECONDS" '
-            .[][]
-            | select((.metadata.container.tags // []) | any(startswith("branch-")))
-            | select((.created_at | fromdateiso8601) < $cutoff)
-            | .id
-          ' versions.json)"
-
-          if [ -z "$VERSION_IDS" ]; then
-            echo "No expired temporary images found."
-            exit 0
-          fi
-
-          for VERSION_ID in $VERSION_IDS; do
-            echo "Deleting expired package version: $VERSION_ID"
-            gh api --method DELETE "${PACKAGE_API}/${VERSION_ID}"
-          done

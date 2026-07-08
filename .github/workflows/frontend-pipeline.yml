@@ -121,7 +121,14 @@ jobs:
             BASE_REF="origin/main"
           fi
 
-          PREVIOUS_VERSION=$(git show "$BASE_REF:package.json" | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
+          echo "Base ref: $BASE_REF"
+
+          if git cat-file -e "$BASE_REF:package.json" 2>/dev/null; then
+            PREVIOUS_VERSION=$(git show "$BASE_REF:package.json" | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")
+          else
+            PREVIOUS_VERSION=""
+            echo "No previous package.json found at base ref."
+          fi
 
           echo "Previous frontend version: $PREVIOUS_VERSION"
           echo "Current frontend version: $CURRENT_VERSION"
