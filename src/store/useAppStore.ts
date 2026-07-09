@@ -53,7 +53,7 @@ export const useAppStore = create<AppState>((set) => ({
   clearSelection: () => set({ selectedId: null }),
 
   // Graph display
-  nodeSize: 2,
+  nodeSize: 0.8,
   setNodeSize: (size) => set({ nodeSize: size }),
 
   // Layout
