@@ -29,7 +29,6 @@ The first part of the pipeline validates the frontend codebase:
 8. Run smoke tests only on pull requests.
 9. Run `npm audit --audit-level=high`.
 
-
 The local equivalents of these commands are documented in [Local_Command_README.md](Local_Command_README.md).
 
 ### Version and image logic
@@ -102,11 +101,11 @@ These tags come directly from the workflow steps in [.github/workflows/manual-te
 
 The workflow [.github/workflows/cleanup-temporary-frontend-images.yml](.github/workflows/cleanup-temporary-frontend-images.yml) runs on a schedule at 03:00 and can also be started manually.
 
-### Purpose
+### Purpose (cleanup)
 
 The workflow removes the temporary GHCR package used for manual frontend images.
 
-### Flow
+### Flow (cleanup)
 
 1. Check whether the temporary package exists.
 2. Exit without failure if the package does not exist.
