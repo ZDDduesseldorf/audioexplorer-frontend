@@ -36,11 +36,14 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     return null;
   }
 
+  const nodeId = node.id;
+  const nodeCategory = node.category?.trim() ?? "";
+
   // Requests the audio file from the backend.
-  const audioUrl = getAudioByUuid(node.id);
+  const audioUrl = getAudioByUuid(nodeId);
 
   // Uses the category provided by the backend.
-  const currentCategory = node.category?.trim() || "Uncategorized";
+  const currentCategory = nodeCategory || "Uncategorized";
 
   const isCategorized = Boolean(node.category?.trim());
 
@@ -58,8 +61,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     }
 
     console.log("Dummy confirm:", {
-      sampleId: node.id,
-      previousCategory: node.category,
+      sampleId: nodeId,
+      previousCategory: nodeCategory,
       selectedCategory,
     });
 
