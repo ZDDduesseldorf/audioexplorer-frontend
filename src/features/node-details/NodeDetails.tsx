@@ -64,7 +64,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       sampleId: nodeId,
       previousCategory: nodeCategory,
       selectedCategory,
-    }); 
+    });
 
     // TODO: Save the selected category through the backend.
   }
