@@ -51,8 +51,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   const sampleDetails = {
     description: "Giggle",
     dataSource: "DS xy",
-    anomaly1: "0.02",
-    anomaly2: "4.00",
+    isolationForest: "54.36%",
+    localOutlierFactor: "89.87%",
   };
 
   function handleConfirm() {
@@ -113,13 +113,13 @@ export function NodeDetails({ node }: NodeDetailsProps) {
             </tr>
 
             <tr className="interactive-detail-row">
-              <th scope="row">Anomaly 1</th>
-              <td>{sampleDetails.anomaly1}</td>
+              <th scope="row">Isolation Forest</th>
+              <td>{sampleDetails.isolationForest}</td>
             </tr>
 
             <tr className="interactive-detail-row">
-              <th scope="row">Anomaly 2</th>
-              <td>{sampleDetails.anomaly2}</td>
+              <th scope="row">Local Outlier Factor</th>
+              <td>{sampleDetails.localOutlierFactor}</td>
             </tr>
           </tbody>
         </table>
