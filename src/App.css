@@ -401,6 +401,32 @@
   border-radius: 8px;
 }
 
+.filter-dropdown-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  background: transparent;
+  border: 2px solid var(--color-light-blue);
+  border-radius: 8px;
+  color: var(--color-cream);
+  font-size: 14px;
+}
+
+.filter-dropdown-search::placeholder {
+  color: var(--color-light-blue);
+  opacity: 0.7;
+}
+
+.filter-dropdown-search:focus-visible {
+  border-color: var(--color-orange);
+  outline: none;
+}
+
+.filter-dropdown-empty {
+  color: var(--color-light-blue);
+  font-size: 13px;
+}
+
 /* ── Selected sample Sidebar ─────────────────────────────────────────────── */
 .sidebar {
   width: 300px;

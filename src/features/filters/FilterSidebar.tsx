@@ -21,6 +21,7 @@ export function FilterSidebar() {
   } = useAppStore();
 
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState("");
 
   const { categories, categorizedCount, uncategorizedCount } = useMemo(() => {
     const counts = new Map<string, number>();
@@ -47,6 +48,10 @@ export function FilterSidebar() {
       uncategorizedCount,
     };
   }, [points]);
+
+  const searchedCategories = categories.filter((c) =>
+    c.name.toLowerCase().includes(categorySearch.trim().toLowerCase()),
+  );
 
   const visibleCategoryCount = categories.filter(
     (c) => !hiddenCategories.has(c.name),
@@ -113,7 +118,10 @@ export function FilterSidebar() {
           <button
             className="filter-dropdown-btn"
             type="button"
-            onClick={() => setDropdownOpen((open) => !open)}
+            onClick={() => {
+              setDropdownOpen((open) => !open);
+              setCategorySearch("");
+            }}
             aria-expanded={isDropdownOpen}
           >
             <span>{dropdownSummary}</span>
@@ -127,7 +135,20 @@ export function FilterSidebar() {
 
           {isDropdownOpen && (
             <div className="filter-dropdown-panel">
-              {categories.map(({ name, count, color }) => (
+              <input
+                className="filter-dropdown-search"
+                type="search"
+                placeholder="Search categories…"
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+                autoFocus
+              />
+
+              {searchedCategories.length === 0 && (
+                <span className="filter-dropdown-empty">No matches</span>
+              )}
+
+              {searchedCategories.map(({ name, count, color }) => (
                 <label key={name} className="filter-option">
                   <span className="filter-option-label">
                     <span
