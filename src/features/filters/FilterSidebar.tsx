@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useAppStore } from "../../store/useAppStore";
+import { useMemo, useState } from "react";
+import { useAppStore, isUncategorized } from "../../store/useAppStore";
 import { getClusterColor } from "../../domain/clusters";
 
 interface CategoryInfo {
@@ -9,23 +9,52 @@ interface CategoryInfo {
 }
 
 export function FilterSidebar() {
-  const { points, hiddenCategories, toggleCategory, setFilterSidebarOpen } =
-    useAppStore();
+  const {
+    points,
+    showCategorized,
+    showUncategorized,
+    toggleCategorized,
+    toggleUncategorized,
+    hiddenCategories,
+    toggleCategory,
+    setFilterSidebarOpen,
+  } = useAppStore();
 
-  const categories = useMemo<CategoryInfo[]>(() => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const { categories, categorizedCount, uncategorizedCount } = useMemo(() => {
     const counts = new Map<string, number>();
     const clusters = new Map<string, number>();
+    let uncategorizedCount = 0;
     for (const p of points) {
-      if (p.category == null) continue;
-      counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
-      clusters.set(p.category, p.cluster);
+      if (isUncategorized(p)) {
+        uncategorizedCount++;
+        continue;
+      }
+      counts.set(p.category!, (counts.get(p.category!) ?? 0) + 1);
+      clusters.set(p.category!, p.cluster);
     }
-    return [...counts.keys()].sort().map((name) => ({
-      name,
-      count: counts.get(name)!,
-      color: getClusterColor(clusters.get(name)!),
-    }));
+    const categories: CategoryInfo[] = [...counts.keys()]
+      .sort()
+      .map((name) => ({
+        name,
+        count: counts.get(name)!,
+        color: getClusterColor(clusters.get(name)!),
+      }));
+    return {
+      categories,
+      categorizedCount: points.length - uncategorizedCount,
+      uncategorizedCount,
+    };
   }, [points]);
+
+  const visibleCategoryCount = categories.filter(
+    (c) => !hiddenCategories.has(c.name),
+  ).length;
+  const dropdownSummary =
+    visibleCategoryCount === categories.length
+      ? "All categories"
+      : `${visibleCategoryCount} of ${categories.length} categories`;
 
   return (
     <aside className="filter-sidebar" aria-label="Filter sidebar">
@@ -42,30 +71,89 @@ export function FilterSidebar() {
       </div>
 
       <section className="filter-section">
-        <h3 className="filter-section-title">Categories</h3>
+        <label className="filter-option">
+          <span className="filter-option-label">Categorized</span>
 
-        {categories.map(({ name, count, color }) => (
-          <label key={name} className="filter-option">
-            <span className="filter-option-label">
-              <span
-                className="filter-category-dot"
-                style={{ background: color }}
-              />
-              {name}
+          <div className="filter-option-controls">
+            <span className="filter-count">
+              {categorizedCount.toLocaleString()}
             </span>
 
-            <div className="filter-option-controls">
-              <span className="filter-count">{count.toLocaleString()}</span>
+            <input
+              className="filter-checkbox"
+              type="checkbox"
+              checked={showCategorized}
+              onChange={toggleCategorized}
+            />
+          </div>
+        </label>
 
-              <input
-                className="filter-checkbox"
-                type="checkbox"
-                checked={!hiddenCategories.has(name)}
-                onChange={() => toggleCategory(name)}
-              />
+        <label className="filter-option">
+          <span className="filter-option-label">Uncategorized</span>
+
+          <div className="filter-option-controls">
+            <span className="filter-count">
+              {uncategorizedCount.toLocaleString()}
+            </span>
+
+            <input
+              className="filter-checkbox"
+              type="checkbox"
+              checked={showUncategorized}
+              onChange={toggleUncategorized}
+            />
+          </div>
+        </label>
+      </section>
+
+      <section className="filter-section">
+        <h3 className="filter-section-title">Filter by Category</h3>
+
+        <div className="filter-dropdown">
+          <button
+            className="filter-dropdown-btn"
+            type="button"
+            onClick={() => setDropdownOpen((open) => !open)}
+            aria-expanded={isDropdownOpen}
+          >
+            <span>{dropdownSummary}</span>
+            <span
+              className={`filter-dropdown-caret${isDropdownOpen ? " open" : ""}`}
+              aria-hidden="true"
+            >
+              ▾
+            </span>
+          </button>
+
+          {isDropdownOpen && (
+            <div className="filter-dropdown-panel">
+              {categories.map(({ name, count, color }) => (
+                <label key={name} className="filter-option">
+                  <span className="filter-option-label">
+                    <span
+                      className="filter-category-dot"
+                      style={{ background: color }}
+                    />
+                    {name}
+                  </span>
+
+                  <div className="filter-option-controls">
+                    <span className="filter-count">
+                      {count.toLocaleString()}
+                    </span>
+
+                    <input
+                      className="filter-checkbox"
+                      type="checkbox"
+                      checked={!hiddenCategories.has(name)}
+                      onChange={() => toggleCategory(name)}
+                    />
+                  </div>
+                </label>
+              ))}
             </div>
-          </label>
-        ))}
+          )}
+        </div>
       </section>
     </aside>
   );
