@@ -20,6 +20,7 @@ export default function App() {
     setNodeSize,
     isFilterSidebarOpen,
     setFilterSidebarOpen,
+    clearSelection,
   } = useAppStore();
 
   const selectedNode = useMemo(
@@ -35,6 +36,22 @@ export default function App() {
   // showAboutPage stays local — only App + Header use it
   const [showAboutPage, setShowAboutPage] = useState(false);
 
+  // Stores whether graph is shown in explorer mode
+  const [isExplorerMode, setIsExplorerMode] = useState(false);
+
+  // Toggles explorer mode
+  const handleToggleExplorerMode = () => {
+    if (!isExplorerMode) {
+      clearSelection();
+    }
+
+    setIsExplorerMode((prev) => !prev);
+  };
+
+  const handleExitExplorerMode = () => {
+    setIsExplorerMode(false);
+  };
+
   return (
     <div className="app-shell">
       <Header
@@ -45,10 +62,10 @@ export default function App() {
       {showAboutPage ? (
         <AboutPage />
       ) : (
-        <main className="app-layout">
-          {isFilterSidebarOpen && <FilterSidebar />}
+        <main className={`app-layout ${isExplorerMode ? "explorer-mode" : ""}`}>
+          {!isExplorerMode && isFilterSidebarOpen && <FilterSidebar />}
 
-          {!isFilterSidebarOpen && (
+          {!isExplorerMode && !isFilterSidebarOpen && (
             <button
               className="filter-open-btn"
               type="button"
@@ -61,6 +78,17 @@ export default function App() {
 
           <div className="canvas-area">
             <div className="map-panel">
+              <button
+                type="button"
+                className={`explorer-mode-button ${isExplorerMode ? "is-active" : ""}`}
+                onClick={handleToggleExplorerMode}
+              >
+                <span>Explore mode</span>
+                <span className="explorer-mode-switch" aria-hidden="true">
+                  <span className="explorer-mode-knob" />
+                </span>
+              </button>
+
               <div className="header-overlay">
                 <h1 className="app-title">Audio Explorer</h1>
                 {!loading && (
@@ -76,7 +104,10 @@ export default function App() {
                 )}
               </div>
 
-              <GraphView />
+              <GraphView
+                isExplorerMode={isExplorerMode}
+                onExitExplorerMode={handleExitExplorerMode}
+              />
 
               <div className="size-control">
                 <label className="size-label">Size</label>
@@ -96,7 +127,9 @@ export default function App() {
             </div>
           </div>
 
-          {selectedNode && <NodeDetails node={selectedNode} />}
+          {!isExplorerMode && selectedNode && (
+            <NodeDetails node={selectedNode} />
+          )}
         </main>
       )}
 

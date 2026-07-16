@@ -36,7 +36,7 @@
   overflow: hidden;
 }
 
-/* ── Map panel ───────────────────────────────────────────── */
+/* ── Map panel ──────────────────────────── */
 .map-panel {
   position: relative;
   width: 100%;
@@ -46,6 +46,69 @@
   background: var(--color-dark-blue);
   border: 2px solid var(--color-orange);
   border-radius: 16px;
+}
+
+/* ── Explorer Buttons ─────────────────────────────── */
+
+.explorer-mode-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.35rem 0.25rem 0.75rem;
+  border: 3px solid var(--color-orange);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-cream);
+
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.explorer-mode-button:hover {
+  filter: brightness(1.05);
+}
+
+.explorer-mode-switch {
+  position: relative;
+  width: 2rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: var(--color-dark-blue);
+}
+
+.explorer-mode-knob {
+  position: absolute;
+  top: 50%;
+  left: 0.25rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--color-cream);
+
+  transform: translateY(-50%);
+  transition: left 0.15s ease;
+}
+
+.explorer-mode-button.is-active {
+  background: var(--color-orange);
+  color: var(--color-dark-blue);
+}
+
+.explorer-mode-button.is-active .explorer-mode-switch {
+  background: var(--color-dark-blue);
+}
+
+.explorer-mode-button.is-active .explorer-mode-knob {
+  left: 1.1rem;
+  background: var(--color-orange);
 }
 
 /* ── Sigma container ─────────────────────────────────────── */
