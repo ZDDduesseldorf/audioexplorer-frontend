@@ -30,9 +30,9 @@ export function AboutPage() {
 
             <div className="about-card__text-left">
               <p>
-                The Audioexplorer website, which you are currently visiting,
-                was implemented and developed by a group of students as part of
-                the module of the same name.
+                The Audioexplorer website, which you are currently visiting, was
+                implemented and developed by a group of students as part of the
+                module of the same name.
               </p>
 
               <p>
@@ -40,8 +40,8 @@ export function AboutPage() {
                 Professor Florian Huber, Ph.D. Since September 2021, he has
                 served as a professor of Data Science and Visual Analytics at
                 the Center for Digitalization and Digitality and in the
-                Department of Media at Düsseldorf University of Applied
-                Sciences (1).
+                Department of Media at Düsseldorf University of Applied Sciences
+                (1).
               </p>
 
               <p>
@@ -76,9 +76,9 @@ export function AboutPage() {
 
               <p>
                 Samples that have not yet been assigned can be categorized
-                within the application. Various filter functions allow users
-                to narrow down the displayed dataset and show only selected
-                samples on the map.
+                within the application. Various filter functions allow users to
+                narrow down the displayed dataset and show only selected samples
+                on the map.
               </p>
             </div>
           </div>
@@ -90,11 +90,7 @@ export function AboutPage() {
               (1) Hochschule Düsseldorf (2025).{" "}
               <cite>{references.hsd.label}</cite>. Faculty of Media. Available
               at:{" "}
-              <a
-                href={references.hsd.url}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={references.hsd.url} target="_blank" rel="noreferrer">
                 {references.hsd.url}
               </a>{" "}
               (Accessed: 18 July 2026).
@@ -113,58 +109,62 @@ export function AboutPage() {
 
             <div className="about-card__text-right">
               <p>
-                The research partners and primary audience of the Audioexplorer website
-                were scientists studying human emotions and nonverbal vocal behaviour.
+                The research partners and primary audience of the Audioexplorer
+                website were scientists studying human emotions and nonverbal
+                vocal behaviour.
               </p>
 
               <p>
-                The project was developed in collaboration with researchers from the
-                research group led by Disa Sauter, Associate Professor of Social
-                Psychology at the Department of Experimental Psychology at the
-                University of Oxford.
+                The project was developed in collaboration with researchers from
+                the research group led by Disa Sauter, Associate Professor of
+                Social Psychology at the Department of Experimental Psychology
+                at the University of Oxford.
               </p>
 
               <p>
                 Her research focuses on the relationship between emotions and
-                behaviour, with particular emphasis on nonverbal vocal expressions such
-                as laughter, crying, and sighing. Her group uses empirical and
-                computational methods to investigate how emotions are expressed and
-                perceived in different contexts and cultures (2).
+                behaviour, with particular emphasis on nonverbal vocal
+                expressions such as laughter, crying, and sighing. Her group
+                uses empirical and computational methods to investigate how
+                emotions are expressed and perceived in different contexts and
+                cultures (2).
               </p>
 
               <p>
-                Throughout the development process, the students primarily communicated
-                with researcher Elisabeta Militaru. Her work combines emotion science,
-                environmental psychology, and digital research methods (3).
+                Throughout the development process, the students primarily
+                communicated with researcher Elisabeta Militaru. Her work
+                combines emotion science, environmental psychology, and digital
+                research methods (3).
               </p>
 
               <p>
                 She investigates how physical environments influence emotional
-                experiences, behaviour, and a person&apos;s sense of self. By combining
-                large-scale datasets, deep-learning methods, and field studies, she
-                examines how people experience different environments and express
-                emotions in relation to their surroundings (3).
+                experiences, behaviour, and a person&apos;s sense of self. By
+                combining large-scale datasets, deep-learning methods, and field
+                studies, she examines how people experience different
+                environments and express emotions in relation to their
+                surroundings (3).
               </p>
 
               <p>
                 The researchers required a digital tool that would allow them to
-                explore, play, label, and categorize collections of human vocal audio
-                samples. Based on their requirements and feedback, the Audioexplorer
-                website was designed to make complex audio datasets easier to access and
-                examine.
+                explore, play, label, and categorize collections of human vocal
+                audio samples. Based on their requirements and feedback, the
+                Audioexplorer website was designed to make complex audio
+                datasets easier to access and examine.
               </p>
 
               <p>
-                The interactive map, audio player, categorization tools, and filtering
-                functions support researchers in identifying patterns within the
-                dataset and assigning relevant labels to previously uncategorized
-                samples.
+                The interactive map, audio player, categorization tools, and
+                filtering functions support researchers in identifying patterns
+                within the dataset and assigning relevant labels to previously
+                uncategorized samples.
               </p>
 
               <p>
-                The ongoing exchange with the research partners helped ensure that the
-                application was developed according to the practical needs of its
-                intended users.
+                The ongoing exchange with the research partners helped ensure
+                that the application was developed according to the practical
+                needs of its intended users.
               </p>
             </div>
           </div>
@@ -176,19 +176,15 @@ export function AboutPage() {
               (2) University of Oxford (n.d.).{" "}
               <cite>{references.oxford.label}</cite>. Department of Experimental
               Psychology. Available at:{" "}
-              <a
-                href={references.oxford.url}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={references.oxford.url} target="_blank" rel="noreferrer">
                 {references.oxford.url}
               </a>{" "}
               (Accessed: 18 July 2026).
             </p>
 
             <p>
-              (3) Militaru, E. (n.d.).{" "}
-              <cite>{references.militaru.label}</cite>. Available at:{" "}
+              (3) Militaru, E. (n.d.). <cite>{references.militaru.label}</cite>.
+              Available at:{" "}
               <a
                 href={references.militaru.url}
                 target="_blank"
