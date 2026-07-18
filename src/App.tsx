@@ -57,6 +57,8 @@ export default function App() {
       <Header
         onAboutClick={() => setShowAboutPage(true)}
         onLogoClick={() => setShowAboutPage(false)}
+        pointCount={loading ? undefined : points.length}
+        clusterCount={loading ? undefined : clusterCount}
       />
 
       {showAboutPage ? (
@@ -133,7 +135,9 @@ export default function App() {
         </main>
       )}
 
-      <Footer />
+      <Footer
+        status={selectedNode ? `Selected: ${selectedNode.id}` : undefined}
+      />
     </div>
   );
 }
