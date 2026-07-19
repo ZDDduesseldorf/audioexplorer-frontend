@@ -91,7 +91,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       </div>
 
       <div className="audio-player">
-        <AudioWaveform audioUrl={audioUrl} />
+        <AudioWaveform key={nodeId} audioUrl={audioUrl} />
       </div>
 
       <div className="sample-details">
