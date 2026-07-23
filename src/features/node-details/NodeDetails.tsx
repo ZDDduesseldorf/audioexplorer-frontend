@@ -3,6 +3,7 @@ import { getAudioByUuid } from "../../services/audioPlayerService";
 import { AudioWaveform } from "./AudioWaveform";
 import { useAppStore } from "../../store/useAppStore";
 import { useEffect, useMemo, useState } from "react";
+import "./NodeDetails.css";
 
 interface NodeDetailsProps {
   node: PointData | null;

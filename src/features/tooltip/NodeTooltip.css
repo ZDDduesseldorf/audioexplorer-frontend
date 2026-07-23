@@ -1,0 +1,30 @@
+.node-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  padding: 3px 10px;
+  border: 2px solid var(--color-orange);
+  border-radius: 999px;
+  background: var(--color-orange);
+  color: var(--color-dark-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - 12px));
+}
+
+.tooltip-category {
+  margin: 0;
+  color: var(--color-dark-blue);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/*.tooltip-coords {
+  color: var(--color-dark-blue);
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  line-height: 1.1;
+}*/

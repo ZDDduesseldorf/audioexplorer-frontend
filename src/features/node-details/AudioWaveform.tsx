@@ -1,6 +1,7 @@
 import { useWavesurfer } from "@wavesurfer/react";
 import { useEffect, useRef, useState } from "react";
 import { getAudioPlayer } from "../../services/audioPlayerService";
+import "./AudioWaveform.css";
 
 interface AudioWaveformProps {
   audioUrl: string;
