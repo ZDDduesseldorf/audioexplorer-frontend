@@ -5,6 +5,7 @@ import { Minimap } from "../graph/minimap/Minimap";
 import { KNNOverlay } from "../graph/overlay/KNNOverlay";
 import { NodeTooltip } from "../features/tooltip/NodeTooltip";
 import { useAppStore } from "../store/useAppStore";
+import "./GraphView.css";
 
 interface GraphViewProps {
   isExplorerMode: boolean;

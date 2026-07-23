@@ -1,4 +1,5 @@
 import type { PointData } from "../../domain/types";
+import "./NodeTooltip.css";
 
 interface NodeTooltipProps {
   hoveredId: string | null;

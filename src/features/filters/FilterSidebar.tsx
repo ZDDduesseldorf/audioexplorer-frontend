@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useAppStore, isUncategorized } from "../../store/useAppStore";
 import { getClusterColor } from "../../domain/clusters";
+import "./FilterSidebar.css";
 
 interface CategoryInfo {
   name: string;

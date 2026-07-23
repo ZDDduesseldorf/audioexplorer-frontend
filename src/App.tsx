@@ -7,7 +7,7 @@ import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { AboutPage } from "./components/AboutPage";
 import { useAppStore } from "./store/useAppStore";
-import "./App.css";
+import "./styles/layout.css";
 
 export default function App() {
   const { loading, error } = useAudioData("data-5k");
