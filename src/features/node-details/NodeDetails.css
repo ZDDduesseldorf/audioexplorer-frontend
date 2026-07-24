@@ -10,6 +10,7 @@
   background: var(--color-dark-blue);
   border: 2px solid var(--color-light-blue);
   border-radius: 16px;
+  /* Keep the content visually centered when classic scrollbars take up space. */
   scrollbar-gutter: stable both-edges;
 }
 
