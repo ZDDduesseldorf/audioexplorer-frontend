@@ -201,7 +201,7 @@
 }
 
 @media (max-height: 760px) {
-   .about-page {
+  .about-page {
     --about-card-offset: 16px;
     padding-top: 14px;
     padding-bottom: 14px;
