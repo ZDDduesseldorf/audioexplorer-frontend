@@ -1,0 +1,10 @@
+.site-footer {
+  min-height: 56px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-dark-blue);
+  color: var(--color-cream);
+  font-size: 16px;
+}

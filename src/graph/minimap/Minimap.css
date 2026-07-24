@@ -1,0 +1,12 @@
+/* ── Minimap ─────────────────────────────────────────────── */
+.minimap {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  z-index: 10;
+  background: var(--color-dark-blue);
+  border: 1px solid var(--color-light-blue);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}

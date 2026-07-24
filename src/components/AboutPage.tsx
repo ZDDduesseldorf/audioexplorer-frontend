@@ -1,3 +1,5 @@
+import "./AboutPage.css";
+
 const references = {
   hsd: {
     label: "Prof. Dr. Florian Huber",

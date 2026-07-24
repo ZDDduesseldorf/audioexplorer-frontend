@@ -1,4 +1,5 @@
 import Logo from "../assets/Logo_orange_gross.svg";
+import "./Header.css";
 
 interface HeaderProps {
   onAboutClick: () => void;

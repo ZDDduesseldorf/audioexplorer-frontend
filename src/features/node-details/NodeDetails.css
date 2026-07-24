@@ -1,0 +1,275 @@
+.sidebar {
+  width: 300px;
+  height: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--color-dark-blue);
+  border: 2px solid var(--color-light-blue);
+  border-radius: 16px;
+  scrollbar-gutter: stable both-edges;
+}
+
+.sample-details {
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+.details-table {
+  width: 100%;
+
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  color: var(--color-light-blue);
+  font-size: 14px;
+}
+
+.details-table th,
+.details-table td {
+  height: 36px;
+  box-sizing: border-box;
+
+  padding: 6px 8px;
+
+  border: 1px solid var(--color-light-blue);
+
+  text-align: center;
+  vertical-align: middle;
+
+  overflow-wrap: anywhere;
+}
+
+.details-table th {
+  width: 52%;
+
+  color: var(--color-light-blue);
+  font-weight: 400;
+}
+
+.details-table td {
+  width: 48%;
+
+  color: var(--color-light-blue);
+  font-weight: 400;
+}
+
+.details-table .interactive-detail-row th,
+.details-table .interactive-detail-row td {
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.details-table .interactive-detail-row:hover th,
+.details-table .interactive-detail-row:hover td {
+  background: rgba(249, 223, 198, 0.42);
+  color: var(--color-cream);
+}
+
+/* ── Annotation section ──────────────────────────────────── */
+.annotation-section {
+  margin-top: 45px;
+  padding: 0 10px 18px;
+  flex-shrink: 0;
+}
+
+.annotation-title {
+  margin: 0 6px 12px;
+  color: var(--color-light-blue);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.annotation-divider {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 12px;
+  background: var(--color-light-blue);
+}
+
+/* ── Annotation status ───────────────────────────────────── */
+.annotation-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 0 6px;
+}
+
+.annotation-label {
+  color: var(--color-light-blue);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 24px;
+  box-sizing: border-box;
+  padding: 2px 5px;
+
+  background: transparent;
+  border: 2px solid;
+  border-radius: 8px;
+
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.status-badge.categorized {
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
+.status-badge.uncategorized {
+  color: var(--color-light-blue);
+  border-color: var(--color-light-blue);
+}
+
+/* ── Category selection ──────────────────────────────────── */
+.category-label {
+  display: block;
+  margin: 14px 6px 8px;
+}
+
+.category-select {
+  width: 100%;
+  height: 34px;
+  box-sizing: border-box;
+
+  padding: 5px 9px;
+
+  background: var(--color-cream);
+  color: var(--color-dark-blue);
+
+  border: none;
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.category-select:hover {
+  outline: 1px solid var(--color-orange);
+}
+
+.category-select:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+/* ── Annotation buttons ──────────────────────────────────── */
+.annotation-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.confirm-btn,
+.next-btn {
+  min-height: 28px;
+  box-sizing: border-box;
+
+  padding: 4px 8px;
+
+  border: 2px solid var(--color-orange);
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    filter 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.confirm-btn {
+  background: var(--color-orange);
+  color: var(--color-white);
+}
+
+.confirm-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.confirm-btn:not(:disabled):hover {
+  background: var(--color-light-blue);
+  border-color: var(--color-light-blue);
+  color: var(--color-dark-blue);
+  filter: none;
+}
+
+.next-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+
+  background: transparent;
+  color: var(--color-orange);
+}
+
+.next-btn:hover {
+  background: var(--color-light-blue);
+  border-color: var(--color-light-blue);
+  color: var(--color-dark-blue);
+}
+
+.confirm-btn:focus-visible,
+.next-btn:focus-visible {
+  outline: 2px solid var(--color-cream);
+  outline-offset: 3px;
+}
+
+@media (max-height: 760px) {
+  .details-table th,
+  .details-table td {
+    height: 34px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .annotation-section {
+    margin-top: 22px;
+    padding-bottom: 14px;
+  }
+
+  .annotation-title {
+    margin-bottom: 10px;
+  }
+
+  .annotation-divider {
+    margin-bottom: 10px;
+  }
+
+  .category-label {
+    margin-top: 12px;
+    margin-bottom: 7px;
+  }
+
+  .annotation-actions {
+    margin-top: 12px;
+  }
+}
