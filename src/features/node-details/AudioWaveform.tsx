@@ -65,23 +65,20 @@ export function AudioWaveform({ audioUrl }: AudioWaveformProps) {
     });
   }
 
-  // converts seconds into mm:ss:SSS
+  // Converts seconds into MM:SS,T.
   function formatTime(seconds: number): string {
     const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
 
-    const minutes = Math.floor(safeSeconds / 60);
-    const wholeSeconds = Math.floor(safeSeconds % 60);
-    const milliseconds = Math.floor((safeSeconds % 1) * 1000);
+    const totalTenths = Math.floor(safeSeconds * 10);
 
-    return [
-      minutes.toString().padStart(2, "0"),
-      wholeSeconds.toString().padStart(2, "0"),
-      milliseconds.toString().padStart(3, "0"),
-    ].join(":");
+    const minutes = Math.floor(totalTenths / 600);
+    const wholeSeconds = Math.floor((totalTenths % 600) / 10);
+    const tenths = totalTenths % 10;
+
+    return `${minutes.toString().padStart(2, "0")}:${wholeSeconds
+      .toString()
+      .padStart(2, "0")},${tenths}`;
   }
-
-  // shows the full audio length before playback starts and during playback it shows the current position
-  const displayedTime = currentTime > 0 ? currentTime : duration;
 
   return (
     <>
@@ -89,7 +86,9 @@ export function AudioWaveform({ audioUrl }: AudioWaveformProps) {
         {isPlaying ? "■" : "▶"}
       </button>
 
-      <span className="audio-time">{formatTime(displayedTime)}</span>
+      <span className="audio-time">
+        {formatTime(currentTime)} / {formatTime(duration)}
+      </span>
 
       <div className="audio-waveform">
         <div ref={containerRef} className="wavesurfer-container" />
