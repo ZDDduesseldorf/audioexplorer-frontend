@@ -35,6 +35,10 @@ export function useGraphEngine(
   callbacks: GraphEngineCallbacks,
 ): GraphEngine | null {
   const [engine, setEngine] = useState<GraphEngine | null>(null);
+  // Mirrors `engine`, but updated synchronously so effects running in the
+  // same commit (e.g. when points and selectedId change together) never
+  // call refresh() on a Sigma instance that was just destroyed.
+  const engineRef = useRef<GraphEngine | null>(null);
 
   const nodeSizeRef = useRef(nodeSize);
   const selectedIdRef = useRef(selectedId);
@@ -149,6 +153,7 @@ export function useGraphEngine(
     };
 
     const adapter = new SigmaEngineAdapter(sigma);
+    engineRef.current = adapter;
 
     const handleEnterNode = ({ node }: { node: string }) => {
       // stores current hovered node
@@ -262,6 +267,9 @@ export function useGraphEngine(
       sigma.removeListener("clickStage", handleClickStage);
       sigma.getCamera().removeListener("updated", updateActiveTooltipPosition);
       adapter.destroy();
+      if (engineRef.current === adapter) {
+        engineRef.current = null;
+      }
       setEngine(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -270,13 +278,13 @@ export function useGraphEngine(
   // Sync nodeSize without rebuilding
   useEffect(() => {
     nodeSizeRef.current = nodeSize;
-    engine?.refresh();
+    engineRef.current?.refresh();
   }, [nodeSize, engine]);
 
   // Sync selectedId without rebuilding
   useEffect(() => {
     selectedIdRef.current = selectedId;
-    engine?.refresh();
+    engineRef.current?.refresh();
   }, [selectedId, engine]);
 
   return engine;

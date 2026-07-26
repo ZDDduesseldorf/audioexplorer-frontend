@@ -173,6 +173,12 @@
   outline-offset: 2px;
 }
 
+.annotation-error {
+  margin: 10px 6px 0;
+  color: var(--color-orange);
+  font-size: 12px;
+}
+
 /* ── Annotation buttons ──────────────────────────────────── */
 .annotation-actions {
   display: flex;

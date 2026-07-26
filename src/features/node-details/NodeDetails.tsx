@@ -1,7 +1,12 @@
 import type { PointData } from "../../domain/types";
 import { getAudioByUuid } from "../../services/audioPlayerService";
+import { createLabeledSample } from "../../services/audioDataService";
 import { AudioWaveform } from "./AudioWaveform";
-import { useAppStore } from "../../store/useAppStore";
+import {
+  useAppStore,
+  isUncategorized,
+  UNKNOWN_CATEGORY,
+} from "../../store/useAppStore";
 import { useEffect, useMemo, useState } from "react";
 import "./NodeDetails.css";
 
@@ -12,7 +17,10 @@ interface NodeDetailsProps {
 export function NodeDetails({ node }: NodeDetailsProps) {
   const clearSelection = useAppStore((s) => s.clearSelection);
   const points = useAppStore((state) => state.points);
+  const setPointCategory = useAppStore((state) => state.setPointCategory);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isSaving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   // Creates a list of all categories returned by the backend.
   const categories = useMemo(() => {
     const categorySet = new Set<string>();
@@ -20,7 +28,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     points.forEach((point) => {
       const category = point.category?.trim();
 
-      if (category) {
+      if (category && category !== UNKNOWN_CATEGORY) {
         categorySet.add(category);
       }
     });
@@ -31,6 +39,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   // Selects the current category whenever a different sample is opened.
   useEffect(() => {
     setSelectedCategory(node?.category?.trim() ?? "");
+    setSaveError(null);
   }, [node?.id, node?.category]);
 
   if (!node) {
@@ -46,7 +55,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   // Uses the category provided by the backend.
   const currentCategory = nodeCategory || "Uncategorized";
 
-  const isCategorized = Boolean(node.category?.trim());
+  const isCategorized = !isUncategorized(node);
 
   // Temporary dummy data until the remaining backend routes are connected.
   const sampleDetails = {
@@ -61,13 +70,19 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       return;
     }
 
-    console.log("Dummy confirm:", {
-      sampleId: nodeId,
-      previousCategory: nodeCategory,
-      selectedCategory,
-    });
+    setSaving(true);
+    setSaveError(null);
 
-    // TODO: Save the selected category through the backend.
+    createLabeledSample(nodeId, selectedCategory)
+      .then(() => {
+        setPointCategory(nodeId, selectedCategory);
+      })
+      .catch((err: unknown) => {
+        setSaveError(err instanceof Error ? err.message : String(err));
+      })
+      .finally(() => {
+        setSaving(false);
+      });
   }
 
   function handleNext() {
@@ -126,60 +141,58 @@ export function NodeDetails({ node }: NodeDetailsProps) {
         </table>
       </div>
 
-      <div className="annotation-section">
-        <h3 className="annotation-title">Annotation</h3>
+      {!isCategorized && (
+        <div className="annotation-section">
+          <h3 className="annotation-title">Annotation</h3>
 
-        <div className="annotation-divider" />
+          <div className="annotation-divider" />
 
-        <div className="annotation-status-row">
-          <span className="annotation-label">Current Status</span>
+          <div className="annotation-status-row">
+            <span className="annotation-label">Current Status</span>
 
-          <span
-            className={`status-badge ${
-              isCategorized ? "categorized" : "uncategorized"
-            }`}
+            <span className="status-badge uncategorized">Uncategorized</span>
+          </div>
+
+          <label
+            className="annotation-label category-label"
+            htmlFor="category-select"
           >
-            {isCategorized ? "Categorized" : "Uncategorized"}
-          </span>
-        </div>
+            Category
+          </label>
 
-        <label
-          className="annotation-label category-label"
-          htmlFor="category-select"
-        >
-          Category
-        </label>
-
-        <select
-          id="category-select"
-          className="category-select"
-          value={selectedCategory}
-          onChange={(event) => setSelectedCategory(event.target.value)}
-        >
-          <option value="">Choose a category</option>
-
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-
-        <div className="annotation-actions">
-          <button
-            type="button"
-            className="confirm-btn"
-            onClick={handleConfirm}
-            disabled={!selectedCategory}
+          <select
+            id="category-select"
+            className="category-select"
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
           >
-            Confirm
-          </button>
+            <option value="">Choose a category</option>
 
-          <button type="button" className="next-btn" onClick={handleNext}>
-            Next <span aria-hidden="true">▶</span>
-          </button>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+
+          {saveError && <p className="annotation-error">{saveError}</p>}
+
+          <div className="annotation-actions">
+            <button
+              type="button"
+              className="confirm-btn"
+              onClick={handleConfirm}
+              disabled={!selectedCategory || isSaving}
+            >
+              {isSaving ? "Saving…" : "Confirm"}
+            </button>
+
+            <button type="button" className="next-btn" onClick={handleNext}>
+              Next <span aria-hidden="true">▶</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
