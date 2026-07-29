@@ -8,7 +8,9 @@ export interface PointData {
   z?: number;
   category?: string;
   filename?: string;
-  anomalie?: boolean | null;
+  // anomalie?: boolean | null;
   // Neighbor id -> distance, precomputed by the backend.
   nearestNeighbors?: Record<string, number>;
+  anomalie_isolation_forest?: number | string | null;
+  anomalie_lof?: number | string | null;
 }

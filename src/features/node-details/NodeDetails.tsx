@@ -9,10 +9,42 @@ interface NodeDetailsProps {
   node: PointData | null;
 }
 
+/**
+ * Anomaly values that FastAPI may add to each embedding point.
+ * The type extension keeps NodeDetails compatible even when these fields
+ * have not yet been added to the central PointData interface.
+ */
+type PointWithAnomalyScores = PointData & {
+  anomalie_isolation_forest?: number | string | null;
+  anomalie_lof?: number | string | null;
+  anomalyIsolationForest?: number | string | null;
+  anomalyLof?: number | string | null;
+  isolationForest?: number | string | null;
+  localOutlierFactor?: number | string | null;
+};
+
+function firstFiniteNumber(...values: unknown[]): number | null {
+  for (const value of values) {
+    const parsedValue =
+      typeof value === "string" ? Number.parseFloat(value) : value;
+
+    if (typeof parsedValue === "number" && Number.isFinite(parsedValue)) {
+      return parsedValue;
+    }
+  }
+
+  return null;
+}
+
+function formatPercentage(value: number | null): string {
+  return value === null ? "—" : `${value.toFixed(2)}%`;
+}
+
 export function NodeDetails({ node }: NodeDetailsProps) {
-  const clearSelection = useAppStore((s) => s.clearSelection);
+  const clearSelection = useAppStore((state) => state.clearSelection);
   const points = useAppStore((state) => state.points);
   const [selectedCategory, setSelectedCategory] = useState("");
+
   // Creates a list of all categories returned by the backend.
   const categories = useMemo(() => {
     const categorySet = new Set<string>();
@@ -39,21 +71,34 @@ export function NodeDetails({ node }: NodeDetailsProps) {
 
   const nodeId = node.id;
   const nodeCategory = node.category?.trim() ?? "";
+  const pointWithAnomalyScores = node as PointWithAnomalyScores;
+
+  // Reads the values directly from the point returned by FastAPI.
+  const isolationForestValue = firstFiniteNumber(
+    pointWithAnomalyScores.anomalie_isolation_forest,
+    pointWithAnomalyScores.anomalyIsolationForest,
+    pointWithAnomalyScores.isolationForest,
+  );
+
+  const localOutlierFactorValue = firstFiniteNumber(
+    pointWithAnomalyScores.anomalie_lof,
+    pointWithAnomalyScores.anomalyLof,
+    pointWithAnomalyScores.localOutlierFactor,
+  );
 
   // Requests the audio file from the backend.
   const audioUrl = getAudioByUuid(nodeId);
 
   // Uses the category provided by the backend.
   const currentCategory = nodeCategory || "Uncategorized";
+  const isCategorized = Boolean(nodeCategory);
 
-  const isCategorized = Boolean(node.category?.trim());
-
-  // Temporary dummy data until the remaining backend routes are connected.
+  // Description and data source stay unchanged until their backend routes exist.
   const sampleDetails = {
     description: "Giggle",
     dataSource: "DS xy",
-    isolationForest: "54.36%",
-    localOutlierFactor: "89.87%",
+    isolationForest: formatPercentage(isolationForestValue),
+    localOutlierFactor: formatPercentage(localOutlierFactorValue),
   };
 
   function handleConfirm() {
