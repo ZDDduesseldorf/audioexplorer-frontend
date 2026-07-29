@@ -18,7 +18,7 @@ cd audioexplorer-frontend
 npm install
 ```
 
-Place a `data/` folder one level above this directory (i.e. at `../data/`).
+Place a `data/` folder containing all audio files one level above this directory (i.e. at `../data/`).
 
 ## Run
 
