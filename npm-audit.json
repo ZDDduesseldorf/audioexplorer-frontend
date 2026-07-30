@@ -5,16 +5,10 @@
       "name": "@eslint/config-array",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "minimatch"
-      ],
-      "effects": [
-        "eslint"
-      ],
+      "via": ["minimatch"],
+      "effects": ["eslint"],
       "range": "<=0.22.0",
-      "nodes": [
-        "node_modules/@eslint/config-array"
-      ],
+      "nodes": ["node_modules/@eslint/config-array"],
       "fixAvailable": {
         "name": "eslint",
         "version": "10.8.0",
@@ -25,16 +19,10 @@
       "name": "@eslint/eslintrc",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "minimatch"
-      ],
-      "effects": [
-        "eslint"
-      ],
+      "via": ["minimatch"],
+      "effects": ["eslint"],
       "range": "0.0.1 || >=0.1.1",
-      "nodes": [
-        "node_modules/@eslint/eslintrc"
-      ],
+      "nodes": ["node_modules/@eslint/eslintrc"],
       "fixAvailable": {
         "name": "eslint",
         "version": "10.8.0",
@@ -53,10 +41,7 @@
           "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
           "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg",
           "severity": "high",
-          "cwe": [
-            "CWE-400",
-            "CWE-770"
-          ],
+          "cwe": ["CWE-400", "CWE-770"],
           "cvss": {
             "score": 7.5,
             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
@@ -64,13 +49,9 @@
           "range": "<=5.0.7"
         }
       ],
-      "effects": [
-        "minimatch"
-      ],
+      "effects": ["minimatch"],
       "range": "<=5.0.7",
-      "nodes": [
-        "node_modules/brace-expansion"
-      ],
+      "nodes": ["node_modules/brace-expansion"],
       "fixAvailable": {
         "name": "eslint",
         "version": "10.8.0",
@@ -81,16 +62,10 @@
       "name": "eslint",
       "severity": "high",
       "isDirect": true,
-      "via": [
-        "@eslint/config-array",
-        "@eslint/eslintrc",
-        "minimatch"
-      ],
+      "via": ["@eslint/config-array", "@eslint/eslintrc", "minimatch"],
       "effects": [],
       "range": "0.12.0 - 2.0.0-rc.1 || 4.1.0 - 10.0.0-rc.2",
-      "nodes": [
-        "node_modules/eslint"
-      ],
+      "nodes": ["node_modules/eslint"],
       "fixAvailable": {
         "name": "eslint",
         "version": "10.8.0",
@@ -101,18 +76,10 @@
       "name": "minimatch",
       "severity": "high",
       "isDirect": false,
-      "via": [
-        "brace-expansion"
-      ],
-      "effects": [
-        "@eslint/config-array",
-        "@eslint/eslintrc",
-        "eslint"
-      ],
+      "via": ["brace-expansion"],
+      "effects": ["@eslint/config-array", "@eslint/eslintrc", "eslint"],
       "range": "2.0.0 - 10.0.2",
-      "nodes": [
-        "node_modules/minimatch"
-      ],
+      "nodes": ["node_modules/minimatch"],
       "fixAvailable": {
         "name": "eslint",
         "version": "10.8.0",
