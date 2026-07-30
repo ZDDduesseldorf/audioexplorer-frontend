@@ -23,6 +23,9 @@ interface GraphEngineCallbacks {
 const HOVER_COLOR = "#F9DFC6";
 const SELECTED_COLOR = "#F9DFC6";
 
+// Delay before hover audio starts.
+const HOVER_AUDIO_DELAY_MS = 150;
+
 export function useGraphEngine(
   containerRef: React.RefObject<HTMLDivElement | null>,
   points: PointData[],
@@ -36,6 +39,9 @@ export function useGraphEngine(
   const nodeSizeRef = useRef(nodeSize);
   const selectedIdRef = useRef(selectedId);
   const hoveredIdRef = useRef<string | null>(null);
+
+  // Stores the timer used to delay hover audio playback
+  const hoverAudioTimerRef = useRef<number | null>(null);
 
   // stores whether hover audio is enabled
   const isHoverAudioEnabledRef = useRef(isHoverAudioEnabled);
@@ -64,6 +70,10 @@ export function useGraphEngine(
     isHoverAudioEnabledRef.current = isHoverAudioEnabled;
 
     if (!isHoverAudioEnabled) {
+      if (hoverAudioTimerRef.current !== null) {
+        window.clearTimeout(hoverAudioTimerRef.current);
+        hoverAudioTimerRef.current = null;
+      }
       stopAudio();
     }
   }, [isHoverAudioEnabled]);
@@ -141,20 +151,45 @@ export function useGraphEngine(
     const adapter = new SigmaEngineAdapter(sigma);
 
     const handleEnterNode = ({ node }: { node: string }) => {
+      // stores current hovered node
       hoveredIdRef.current = node;
       showHoverTooltipForNode(node);
+
+      // changes cursor to let user know that the node is also clickable
       sigma.getContainer().style.cursor = "pointer";
       sigma.refresh();
-      if (!isHoverAudioEnabledRef.current) return;
-      playAudioByUuid(node);
+
+      // only starts hover audio when the mode is enabled
+      if (!isHoverAudioEnabledRef.current) {
+        return;
+      }
+
+      // cancels older timer if one still exists
+      if (hoverAudioTimerRef.current !== null) {
+        window.clearTimeout(hoverAudioTimerRef.current);
+      }
+
+      // starts the audio only when the mouse stays on the node for 150 ms
+      hoverAudioTimerRef.current = window.setTimeout(() => {
+        playAudioByUuid(node);
+        hoverAudioTimerRef.current = null;
+      }, HOVER_AUDIO_DELAY_MS);
     };
 
     const handleLeaveNode = () => {
       hoveredIdRef.current = null;
 
       onHoverChangeRef.current?.(null, null);
+
       sigma.getContainer().style.cursor = "default";
 
+      // cancels the planned audio start when the mouse leaves too quickly
+      if (hoverAudioTimerRef.current !== null) {
+        window.clearTimeout(hoverAudioTimerRef.current);
+        hoverAudioTimerRef.current = null;
+      }
+
+      // Stops the currently playing hover audio.
       if (isHoverAudioEnabledRef.current) {
         stopAudio();
       }
@@ -163,16 +198,25 @@ export function useGraphEngine(
     };
 
     const handleClickNode = ({ node }: { node: string }) => {
+      // stores selected node
       selectedIdRef.current = node;
 
       showSelectedTooltipForNode(node);
 
-      //plays selected audio
-      playAudioByUuid(node);
+      // cancels hover playback before starting click playback
+      if (hoverAudioTimerRef.current !== null) {
+        window.clearTimeout(hoverAudioTimerRef.current);
+        hoverAudioTimerRef.current = null;
+      }
 
       const point = points.find((p) => p.id === node);
-      if (point) onNodeClickRef.current?.(point);
 
+      // updates selected audio
+      if (point) {
+        onNodeClickRef.current?.(point);
+      }
+
+      // updates tooltip position
       requestAnimationFrame(() => {
         showSelectedTooltipForNode(node);
       });
@@ -207,6 +251,11 @@ export function useGraphEngine(
     setEngine(adapter);
 
     return () => {
+      if (hoverAudioTimerRef.current !== null) {
+        window.clearTimeout(hoverAudioTimerRef.current);
+        hoverAudioTimerRef.current = null;
+      }
+
       sigma.removeListener("enterNode", handleEnterNode);
       sigma.removeListener("leaveNode", handleLeaveNode);
       sigma.removeListener("clickNode", handleClickNode);

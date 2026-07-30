@@ -3,6 +3,7 @@ import { getAudioByUuid } from "../../services/audioPlayerService";
 import { AudioWaveform } from "./AudioWaveform";
 import { useAppStore } from "../../store/useAppStore";
 import { useEffect, useMemo, useState } from "react";
+import "./NodeDetails.css";
 
 interface NodeDetailsProps {
   node: PointData | null;
@@ -36,11 +37,14 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     return null;
   }
 
+  const nodeId = node.id;
+  const nodeCategory = node.category?.trim() ?? "";
+
   // Requests the audio file from the backend.
-  const audioUrl = getAudioByUuid(node.id);
+  const audioUrl = getAudioByUuid(nodeId);
 
   // Uses the category provided by the backend.
-  const currentCategory = node.category?.trim() || "Uncategorized";
+  const currentCategory = nodeCategory || "Uncategorized";
 
   const isCategorized = Boolean(node.category?.trim());
 
@@ -48,8 +52,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   const sampleDetails = {
     description: "Giggle",
     dataSource: "DS xy",
-    anomaly1: "0.02",
-    anomaly2: "4.00",
+    isolationForest: "54.36%",
+    localOutlierFactor: "89.87%",
   };
 
   function handleConfirm() {
@@ -58,8 +62,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     }
 
     console.log("Dummy confirm:", {
-      sampleId: node.id,
-      previousCategory: node.category,
+      sampleId: nodeId,
+      previousCategory: nodeCategory,
       selectedCategory,
     });
 
@@ -88,7 +92,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       </div>
 
       <div className="audio-player">
-        <AudioWaveform audioUrl={audioUrl} />
+        <AudioWaveform key={nodeId} audioUrl={audioUrl} />
       </div>
 
       <div className="sample-details">
@@ -110,13 +114,13 @@ export function NodeDetails({ node }: NodeDetailsProps) {
             </tr>
 
             <tr className="interactive-detail-row">
-              <th scope="row">Anomaly 1</th>
-              <td>{sampleDetails.anomaly1}</td>
+              <th scope="row">Isolation Forest</th>
+              <td>{sampleDetails.isolationForest}</td>
             </tr>
 
             <tr className="interactive-detail-row">
-              <th scope="row">Anomaly 2</th>
-              <td>{sampleDetails.anomaly2}</td>
+              <th scope="row">Local Outlier Factor</th>
+              <td>{sampleDetails.localOutlierFactor}</td>
             </tr>
           </tbody>
         </table>
