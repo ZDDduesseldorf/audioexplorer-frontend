@@ -1,32 +1,13 @@
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-export default defineConfig(({ isPreview }) => {
-  const backendTarget = isPreview
-    ? "http://host.docker.internal:8000"
-    : "http://localhost:8000";
-
-  const apiProxy = {
-    "/api": {
-      target: backendTarget,
-      changeOrigin: true,
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  publicDir: "../data",
+  server: {
+    proxy: {
+      "/api": "http://localhost:8000",
     },
-  };
-
-  return {
-    plugins: [react()],
-
-    // npm run dev → Frontend läuft direkt auf dem Mac
-    server: {
-      proxy: apiProxy,
-    },
-
-    // Docker / npm run preview → Frontend läuft im Container
-    preview: {
-      host: "0.0.0.0",
-      port: 4173,
-      strictPort: true,
-      proxy: apiProxy,
-    },
-  };
+  },
 });

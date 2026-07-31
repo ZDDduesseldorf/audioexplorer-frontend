@@ -32,7 +32,13 @@ export interface GraphEngine {
   viewportToGraph(pos: Vec2): Vec2;
   getDimensions(): { width: number; height: number };
   refresh(): void;
-  on<E extends GraphEventHandler>(event: E["event"], handler: E["handler"]): void;
-  off<E extends GraphEventHandler>(event: E["event"], handler: E["handler"]): void;
+  on<E extends GraphEventHandler>(
+    event: E["event"],
+    handler: E["handler"],
+  ): void;
+  off<E extends GraphEventHandler>(
+    event: E["event"],
+    handler: E["handler"],
+  ): void;
   destroy(): void;
 }
