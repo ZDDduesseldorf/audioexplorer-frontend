@@ -1,6 +1,7 @@
 # Running Pipeline Commands Locally
 
 This guide explains how to run the local equivalents of the commands used in the frontend GitHub Actions pipeline.
+For the full CI/CD workflow, versioning rules, and image publishing logic, see [frontend-pipeline_README.md](frontend-pipeline_README.md).
 
 Run all commands from the frontend project root.
 

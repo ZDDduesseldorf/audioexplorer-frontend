@@ -40,25 +40,24 @@ export function AudioWaveform({ audioUrl }: AudioWaveformProps) {
   useEffect(() => {
     if (!wavesurfer) return;
 
-    // stores the audio length after the file has loaded
+    // Stores the audio length after the file has loaded
     const unsubscribeReady = wavesurfer.on("ready", (loadedDuration) => {
       setDuration(loadedDuration);
     });
 
-    // resets playback to the beginning after the audio finishes
-    const unsubscribeFinish = wavesurfer.on("finish", () => {
-      wavesurfer.seekTo(0);
-    });
-
     return () => {
       unsubscribeReady();
-      unsubscribeFinish();
     };
   }, [wavesurfer]);
 
-  // starts or pauses audio player
+  // Starts or pauses the audio player
   function handlePlayPause(): void {
     if (!wavesurfer) return;
+
+    // Restarts the sample when playback has already finished
+    if (duration > 0 && currentTime >= duration - 0.01) {
+      wavesurfer.seekTo(0);
+    }
 
     void wavesurfer.playPause().catch((error: unknown) => {
       console.error("Audio could not be played", error);
@@ -69,15 +68,15 @@ export function AudioWaveform({ audioUrl }: AudioWaveformProps) {
   function formatTime(seconds: number): string {
     const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
 
-    const totalTenths = Math.floor(safeSeconds * 10);
+    const totalCentiseconds = Math.floor(safeSeconds * 100);
 
-    const minutes = Math.floor(totalTenths / 600);
-    const wholeSeconds = Math.floor((totalTenths % 600) / 10);
-    const tenths = totalTenths % 10;
+    const minutes = Math.floor(totalCentiseconds / 6000);
+    const wholeSeconds = Math.floor((totalCentiseconds % 6000) / 100);
+    const centiseconds = totalCentiseconds % 100;
 
     return `${minutes.toString().padStart(2, "0")}:${wholeSeconds
       .toString()
-      .padStart(2, "0")},${tenths}`;
+      .padStart(2, "0")}.${centiseconds.toString().padStart(2, "0")}`;
   }
 
   return (
@@ -87,7 +86,11 @@ export function AudioWaveform({ audioUrl }: AudioWaveformProps) {
       </button>
 
       <span className="audio-time">
-        {formatTime(currentTime)} / {formatTime(duration)}
+        {formatTime(
+          duration > 0 && currentTime >= duration - 0.01
+            ? duration
+            : currentTime,
+        )}
       </span>
 
       <div className="audio-waveform">

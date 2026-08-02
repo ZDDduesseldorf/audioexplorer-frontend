@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchAudioData } from "../services/audioDataService";
 import { useAppStore } from "../store/useAppStore";
 
@@ -7,9 +7,10 @@ interface AudioDataState {
   error: Error | null;
 }
 
-// Fetches the dataset and puts it into the global store.
+// Fetches the dataset and puts it into the global store (points +
+// filteredPoints); loading/error stay local since only App shows them.
 export function useAudioData(datasetId: string): AudioDataState {
-  const setPoints = useAppStore((state) => state.setPoints);
+  const setPoints = useAppStore((s) => s.setPoints);
 
   const [state, setState] = useState<AudioDataState>({
     loading: true,
@@ -17,41 +18,19 @@ export function useAudioData(datasetId: string): AudioDataState {
   });
 
   useEffect(() => {
-    let isCancelled = false;
-
     setPoints([]);
-    setState({
-      loading: true,
-      error: null,
-    });
-
+    setState({ loading: true, error: null });
     fetchAudioData(datasetId)
-      .then((points) => {
-        if (isCancelled) {
-          return;
-        }
-
-        setPoints(points);
-
-        setState({
-          loading: false,
-          error: null,
-        });
+      .then((data) => {
+        setPoints(data);
+        setState({ loading: false, error: null });
       })
-      .catch((error: unknown) => {
-        if (isCancelled) {
-          return;
-        }
-
+      .catch((err) =>
         setState({
           loading: false,
-          error: error instanceof Error ? error : new Error(String(error)),
-        });
-      });
-
-    return () => {
-      isCancelled = true;
-    };
+          error: err instanceof Error ? err : new Error(String(err)),
+        }),
+      );
   }, [datasetId, setPoints]);
 
   return state;
