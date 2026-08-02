@@ -17,10 +17,13 @@ interface NodeDetailsProps {
 export function NodeDetails({ node }: NodeDetailsProps) {
   const clearSelection = useAppStore((s) => s.clearSelection);
   const points = useAppStore((state) => state.points);
-  const setPointCategory = useAppStore((state) => state.setPointCategory);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isSaving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  // Category the sample was just suggested as; drives the in-sidebar
+  // confirmation message. This is only a suggestion stored in the DB — the
+  // point is intentionally NOT categorized in the frontend.
+  const [savedCategory, setSavedCategory] = useState<string | null>(null);
   // Creates a list of all categories returned by the backend.
   const categories = useMemo(() => {
     const categorySet = new Set<string>();
@@ -36,10 +39,12 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
   }, [points]);
 
-  // Selects the current category whenever a different sample is opened.
+  // Preselects the current category and clears leftover save feedback whenever
+  // a different sample is opened.
   useEffect(() => {
     setSelectedCategory(node?.category?.trim() ?? "");
     setSaveError(null);
+    setSavedCategory(null);
   }, [node?.id, node?.category]);
 
   if (!node) {
@@ -70,12 +75,17 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       return;
     }
 
+    const category = selectedCategory;
+
     setSaving(true);
     setSaveError(null);
+    setSavedCategory(null);
 
-    createLabeledSample(nodeId, selectedCategory)
+    // Only stores the suggestion in the DB; the point stays uncategorized in
+    // the frontend since this is a proposal, not ground truth.
+    createLabeledSample(nodeId, category)
       .then(() => {
-        setPointCategory(nodeId, selectedCategory);
+        setSavedCategory(category);
       })
       .catch((err: unknown) => {
         setSaveError(err instanceof Error ? err.message : String(err));
@@ -176,6 +186,17 @@ export function NodeDetails({ node }: NodeDetailsProps) {
           </select>
 
           {saveError && <p className="annotation-error">{saveError}</p>}
+
+          {savedCategory && (
+            <div className="annotation-success" role="status">
+              <span className="annotation-success-icon" aria-hidden="true">
+                ✓
+              </span>
+              <span>
+                Suggestion saved: <strong>{savedCategory}</strong>
+              </span>
+            </div>
+          )}
 
           <div className="annotation-actions">
             <button

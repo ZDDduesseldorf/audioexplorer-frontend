@@ -35,8 +35,6 @@ interface AppState extends FilterState {
   points: PointData[]; // full set, as loaded from the API
   filteredPoints: PointData[]; // derived: points minus active filters
   setPoints: (points: PointData[]) => void;
-  // Updates a single point's category, e.g. after labelling it via the API.
-  setPointCategory: (id: string, category: string) => void;
 
   // --- Selection ---
   selectedId: string | null;
@@ -82,17 +80,6 @@ export const useAppStore = create<AppState>((set) => ({
       points,
       filteredPoints: applyFilters(points, state),
     })),
-  setPointCategory: (id, category) =>
-    set((state) => {
-      const points = state.points.map((p) =>
-        p.id === id ? { ...p, category } : p,
-      );
-      const filteredPoints = applyFilters(points, state);
-      const selectedId = filteredPoints.some((p) => p.id === state.selectedId)
-        ? state.selectedId
-        : null;
-      return { points, filteredPoints, selectedId };
-    }),
 
   // Selection
   selectedId: null,
