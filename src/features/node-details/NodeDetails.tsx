@@ -1,39 +1,12 @@
+import { useEffect, useMemo, useState } from "react";
 import type { PointData } from "../../domain/types";
 import { getAudioByUuid } from "../../services/audioPlayerService";
-import { AudioWaveform } from "./AudioWaveform";
 import { useAppStore } from "../../store/useAppStore";
-import { useEffect, useMemo, useState } from "react";
+import { AudioWaveform } from "./AudioWaveform";
 import "./NodeDetails.css";
 
 interface NodeDetailsProps {
   node: PointData | null;
-}
-
-/**
- * Anomaly values that FastAPI may add to each embedding point.
- * The type extension keeps NodeDetails compatible even when these fields
- * have not yet been added to the central PointData interface.
- */
-type PointWithAnomalyScores = PointData & {
-  anomalie_isolation_forest?: number | string | null;
-  anomalie_lof?: number | string | null;
-  anomalyIsolationForest?: number | string | null;
-  anomalyLof?: number | string | null;
-  isolationForest?: number | string | null;
-  localOutlierFactor?: number | string | null;
-};
-
-function firstFiniteNumber(...values: unknown[]): number | null {
-  for (const value of values) {
-    const parsedValue =
-      typeof value === "string" ? Number.parseFloat(value) : value;
-
-    if (typeof parsedValue === "number" && Number.isFinite(parsedValue)) {
-      return parsedValue;
-    }
-  }
-
-  return null;
 }
 
 function formatPercentage(value: number | null): string {
@@ -57,7 +30,9 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       }
     });
 
-    return Array.from(categorySet).sort((a, b) => a.localeCompare(b));
+    return Array.from(categorySet).sort((firstCategory, secondCategory) =>
+      firstCategory.localeCompare(secondCategory),
+    );
   }, [points]);
 
   // Selects the current category whenever a different sample is opened.
@@ -71,20 +46,6 @@ export function NodeDetails({ node }: NodeDetailsProps) {
 
   const nodeId = node.id;
   const nodeCategory = node.category?.trim() ?? "";
-  const pointWithAnomalyScores = node as PointWithAnomalyScores;
-
-  // Reads the values directly from the point returned by FastAPI.
-  const isolationForestValue = firstFiniteNumber(
-    pointWithAnomalyScores.anomalie_isolation_forest,
-    pointWithAnomalyScores.anomalyIsolationForest,
-    pointWithAnomalyScores.isolationForest,
-  );
-
-  const localOutlierFactorValue = firstFiniteNumber(
-    pointWithAnomalyScores.anomalie_lof,
-    pointWithAnomalyScores.anomalyLof,
-    pointWithAnomalyScores.localOutlierFactor,
-  );
 
   // Requests the audio file from the backend.
   const audioUrl = getAudioByUuid(nodeId);
@@ -97,8 +58,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   const sampleDetails = {
     description: "Giggle",
     dataSource: "DS xy",
-    isolationForest: formatPercentage(isolationForestValue),
-    localOutlierFactor: formatPercentage(localOutlierFactorValue),
+    isolationForest: formatPercentage(node.anomalie_isolation_forest),
+    localOutlierFactor: formatPercentage(node.anomalie_lof),
   };
 
   function handleConfirm() {
@@ -111,14 +72,10 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       previousCategory: nodeCategory,
       selectedCategory,
     });
-
-    // TODO: Save the selected category through the backend.
   }
 
   function handleNext() {
     console.log("Dummy next sample");
-
-    // TODO: Select the next sample.
   }
 
   return (

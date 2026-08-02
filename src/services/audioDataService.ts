@@ -4,66 +4,50 @@ import type { PointData } from "../domain/types";
 // "json" uses the static JSON file.
 const DATA_SOURCE: "api" | "json" = "api";
 
-// Empty string uses the Vite dev proxy (/api -> localhost:8000).
+// Empty string uses the Vite development proxy.
 const API_BASE_URL = "";
 
-type AnomalyValue = number | string | null;
-
-interface AnomalyFields {
-  anomalie_isolation_forest?: AnomalyValue;
-
-  // The database/API may use either spelling.
-  anomalie_lof?: AnomalyValue;
-  anomalie_LOF?: AnomalyValue;
-}
-
-interface RawPoint extends AnomalyFields {
+/**
+ * Shape of points in the optional static frontend JSON file.
+ *
+ * Static frontend data already uses the normalized PointData field names.
+ */
+interface RawPoint {
   id: string | number;
   x: number;
   y: number;
+  z?: number;
   cluster: number;
   label: string;
   category?: string;
   filename?: string;
   nearestNeighbors?: Record<string, number>;
+
+  anomalie_isolation_forest?: number | null;
+  anomalie_lof?: number | null;
 }
 
-interface SoundOverview extends AnomalyFields {
+/**
+ * Exact response shape of GET /api/v1/sounds/overviews.
+ *
+ */
+interface SoundOverview {
   uuid: string;
   umap_x: number;
   umap_y: number;
   umap_z: number;
   label: string;
   category: string;
+  original_filename: string;
+  source: string;
+  additional_information: Record<string, string>;
 
-  // Depending on the backend response, one of these names may be used.
-  filename?: string;
-  original_filename?: string;
+  anomalie_isolation_forest: number;
+  anomalie_LOF: number;
 
-  anomalie?: boolean | null;
-  nearest_neighbors?: Record<string, number>;
-}
-
-/**
- * Normalizes the anomaly field names used by the backend.
- *
- * The backend currently uses:
- * - anomalie_isolation_forest
- * - anomalie_lof or anomalie_LOF
- *
- * NodeDetails always receives:
- * - anomalie_isolation_forest
- * - anomalie_lof
- */
-function getAnomalyFields(point: AnomalyFields): {
-  anomalie_isolation_forest: AnomalyValue;
-  anomalie_lof: AnomalyValue;
-} {
-  return {
-    anomalie_isolation_forest: point.anomalie_isolation_forest ?? null,
-
-    anomalie_lof: point.anomalie_lof ?? point.anomalie_LOF ?? null,
-  };
+  anomalie_isolation_forest_label: string;
+  anomalie_LOF_label: string;
+  nearest_neighbors: Record<string, number>;
 }
 
 async function fetchFromJson(datasetId: string): Promise<PointData[]> {
@@ -79,11 +63,13 @@ async function fetchFromJson(datasetId: string): Promise<PointData[]> {
     points: RawPoint[];
   };
 
-  return raw.points.map((point) => ({
+  return raw.points.map((point): PointData => ({
     ...point,
     id: String(point.id),
 
-    ...getAnomalyFields(point),
+    anomalie_isolation_forest: point.anomalie_isolation_forest ?? null,
+
+    anomalie_lof: point.anomalie_lof ?? null,
   }));
 }
 
@@ -106,8 +92,9 @@ async function fetchFromApi(): Promise<PointData[]> {
     categories.map((category, index) => [category, index]),
   );
 
-  return raw.map((point) => ({
+  return raw.map((point): PointData => ({
     id: point.uuid,
+
     x: Number(point.umap_x),
     y: Number(point.umap_y),
     z: Number(point.umap_z),
@@ -116,12 +103,13 @@ async function fetchFromApi(): Promise<PointData[]> {
 
     label: point.label,
     category: point.category,
-
-    filename: point.filename ?? point.original_filename,
+    filename: point.original_filename,
 
     nearestNeighbors: point.nearest_neighbors ?? {},
 
-    ...getAnomalyFields(point),
+    anomalie_isolation_forest: point.anomalie_isolation_forest,
+
+    anomalie_lof: point.anomalie_LOF,
   }));
 }
 
