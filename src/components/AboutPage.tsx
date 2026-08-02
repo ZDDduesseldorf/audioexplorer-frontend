@@ -24,13 +24,13 @@ export function AboutPage() {
           aria-labelledby="students-heading"
         >
           <div className="about-card__body">
-            <h1 id="students-heading" className="about-card__title-left">
+            <h1 id="students-heading" className="about-card__title">
               Students at Düsseldorf
               <br />
               University of Applied Sciences
             </h1>
 
-            <div className="about-card__text-left">
+            <div className="about-card__text">
               <p>
                 The Audioexplorer website, which you are currently visiting, was
                 implemented and developed by a group of students as part of the
@@ -85,8 +85,8 @@ export function AboutPage() {
             </div>
           </div>
 
-          <footer className="about-card__references-left">
-            <h2 className="about-card__references-title-left">References</h2>
+          <footer className="about-card__references">
+            <h2 className="about-card__references-title">References</h2>
 
             <p>
               (1) Hochschule Düsseldorf (2025).{" "}
@@ -105,11 +105,11 @@ export function AboutPage() {
           aria-labelledby="scientists-heading"
         >
           <div className="about-card__body">
-            <h2 id="scientists-heading" className="about-card__title-right">
+            <h2 id="scientists-heading" className="about-card__title">
               Scientists at Oxford University
             </h2>
 
-            <div className="about-card__text-right">
+            <div className="about-card__text">
               <p>
                 The research partners and primary audience of the Audioexplorer
                 website were scientists studying human emotions and nonverbal
@@ -171,8 +171,8 @@ export function AboutPage() {
             </div>
           </div>
 
-          <footer className="about-card__references-right">
-            <h2 className="about-card__references-title-right">References</h2>
+          <footer className="about-card__references">
+            <h2 className="about-card__references-title">References</h2>
 
             <p>
               (2) University of Oxford (n.d.).{" "}
