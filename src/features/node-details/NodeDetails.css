@@ -136,7 +136,7 @@
   transform: translate(-50%, -4px) rotate(45deg);
 }
 
-.anomaly-value-button:hover .anomaly-value-tooltip,
+.anomaly-detail-row:hover .anomaly-value-tooltip,
 .anomaly-value-button:focus-visible .anomaly-value-tooltip {
   opacity: 1;
   visibility: visible;
