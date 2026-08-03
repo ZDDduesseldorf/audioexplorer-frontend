@@ -235,6 +235,45 @@
   outline-offset: 2px;
 }
 
+.annotation-error {
+  margin: 10px 6px 0;
+  color: var(--color-orange);
+  font-size: 12px;
+}
+
+.annotation-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: 10px 6px 0;
+  padding: 8px 10px;
+
+  border: 2px solid var(--color-light-blue);
+  border-radius: 8px;
+
+  color: var(--color-light-blue);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.annotation-success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: var(--color-light-blue);
+  color: var(--color-dark-blue);
+
+  font-size: 11px;
+  line-height: 1;
+}
+
 /* ── Annotation buttons ──────────────────────────────────── */
 .annotation-actions {
   display: flex;
