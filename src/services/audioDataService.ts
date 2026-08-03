@@ -1,16 +1,16 @@
 import type { PointData } from "../domain/types";
 
-// Switch the data source here: "api" loads from the backend,
-// "json" uses the static JSON file.
+// Switch the data source here:
+// "api" loads data from the backend.
+// "json" loads data from a static frontend JSON file.
 const DATA_SOURCE: "api" | "json" = "api";
 
-// Empty string uses the Vite development proxy.
+// An empty base URL uses the Vite development proxy.
 const API_BASE_URL = "";
 
 /**
- * Shape of points in the optional static frontend JSON file.
+ * Shape of a point in the optional static frontend JSON file.
  *
- * Static frontend data already uses the normalized PointData field names.
  */
 interface RawPoint {
   id: string | number;
@@ -25,11 +25,19 @@ interface RawPoint {
 
   anomalie_isolation_forest?: number | null;
   anomalie_lof?: number | null;
+  anomalie_isolation_forest_label?: string | null;
+  anomalie_lof_label?: string | null;
 }
 
 /**
  * Exact response shape of GET /api/v1/sounds/overviews.
  *
+ * The backend API uses uppercase `LOF` in these field names:
+ * - anomalie_LOF
+ * - anomalie_LOF_label
+ *
+ * They are normalized once in fetchFromApi() so that the rest of the
+ * frontend only works with the lowercase PointData field names.
  */
 interface SoundOverview {
   uuid: string;
@@ -47,9 +55,16 @@ interface SoundOverview {
 
   anomalie_isolation_forest_label: string;
   anomalie_LOF_label: string;
+
   nearest_neighbors: Record<string, number>;
 }
 
+/**
+ * Loads the optional static frontend dataset.
+ *
+ * Missing anomaly values and labels are converted to null so every returned
+ * point has the complete PointData shape.
+ */
 async function fetchFromJson(datasetId: string): Promise<PointData[]> {
   const response = await fetch(`/${datasetId}.json`);
 
@@ -70,9 +85,18 @@ async function fetchFromJson(datasetId: string): Promise<PointData[]> {
     anomalie_isolation_forest: point.anomalie_isolation_forest ?? null,
 
     anomalie_lof: point.anomalie_lof ?? null,
+
+    anomalie_isolation_forest_label:
+      point.anomalie_isolation_forest_label ?? null,
+
+    anomalie_lof_label: point.anomalie_lof_label ?? null,
   }));
 }
 
+/**
+ * Loads sound overviews from the backend and converts the API response into
+ * the single PointData shape used throughout the frontend.
+ */
 async function fetchFromApi(): Promise<PointData[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/sounds/overviews`);
 
@@ -82,7 +106,7 @@ async function fetchFromApi(): Promise<PointData[]> {
 
   const raw = (await response.json()) as SoundOverview[];
 
-  // Stable numeric cluster index per category, used for coloring.
+  // Creates a stable numeric cluster index for every category.
   const categories = [...new Set(raw.map((point) => point.category))].sort(
     (firstCategory, secondCategory) =>
       firstCategory.localeCompare(secondCategory),
@@ -107,9 +131,14 @@ async function fetchFromApi(): Promise<PointData[]> {
 
     nearestNeighbors: point.nearest_neighbors ?? {},
 
+    // The Isolation Forest names already match the frontend shape.
     anomalie_isolation_forest: point.anomalie_isolation_forest,
 
+    anomalie_isolation_forest_label: point.anomalie_isolation_forest_label,
+
+    // Normalize the backend's uppercase LOF names once at the fetch boundary.
     anomalie_lof: point.anomalie_LOF,
+    anomalie_lof_label: point.anomalie_LOF_label,
   }));
 }
 

@@ -1,0 +1,444 @@
+.anomaly-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: rgba(15, 23, 42, 0.54);
+  backdrop-filter: blur(4px);
+  animation: anomaly-backdrop-enter 180ms ease-out;
+}
+
+.anomaly-popup {
+  width: min(920px, 100%);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow:
+    0 28px 70px rgba(15, 23, 42, 0.28),
+    0 8px 24px rgba(15, 23, 42, 0.16);
+  animation: anomaly-popup-enter 220ms ease-out;
+}
+
+.anomaly-popup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 32px 22px;
+}
+
+.anomaly-popup-eyebrow {
+  margin: 0 0 6px;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.anomaly-popup-title {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.anomaly-popup-close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #334155;
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.anomaly-popup-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: scale(1.05);
+}
+
+.anomaly-popup-close:focus-visible {
+  outline: 3px solid rgba(56, 189, 248, 0.4);
+  outline-offset: 3px;
+}
+
+.anomaly-popup-divider {
+  height: 1px;
+  margin: 0 32px;
+  background: #e2e8f0;
+}
+
+.anomaly-popup-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(250px, 0.8fr);
+  gap: 30px;
+  padding: 30px 32px 34px;
+}
+
+.anomaly-popup-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  min-width: 0;
+}
+
+.anomaly-result {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.anomaly-result--isolation-forest {
+  border-top: 4px solid #f59e0b;
+}
+
+.anomaly-result--lof {
+  border-top: 4px solid #0ea5e9;
+}
+
+.anomaly-chart-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 330px;
+  padding: 24px 20px 20px;
+}
+
+.anomaly-chart-track {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: min(112px, 60%);
+  height: 230px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 18px 18px 8px 8px;
+  background:
+    linear-gradient(to top, rgba(148, 163, 184, 0.11) 1px, transparent 1px),
+    #f1f5f9;
+  background-size: 100% 25%;
+  box-shadow: inset 0 0 20px rgba(15, 23, 42, 0.04);
+}
+
+.anomaly-chart-fill {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 16px 16px 6px 6px;
+  transition: height 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: height;
+}
+
+.anomaly-chart-fill::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.06)
+  );
+  transform: translateX(-130%);
+  animation: anomaly-bar-shimmer 5s ease-in-out infinite;
+}
+
+.anomaly-chart-fill--isolation-forest {
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 -8px 20px rgba(245, 158, 11, 0.22);
+}
+
+.anomaly-chart-fill--lof {
+  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 55%, #0369a1 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 -8px 20px rgba(14, 165, 233, 0.22);
+}
+
+.anomaly-chart-value {
+  margin-top: 18px;
+  color: #0f172a;
+  font-size: 1.4rem;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.anomaly-chart-name {
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.anomaly-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.anomaly-particle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #bae6fd;
+  box-shadow:
+    0 0 5px rgba(186, 230, 253, 0.95),
+    0 0 10px rgba(125, 211, 252, 0.7);
+  opacity: 0.76;
+  animation-name: anomaly-particle-float;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.anomaly-particle:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  opacity: 0.6;
+}
+
+.anomaly-particle:nth-child(4n) {
+  width: 7px;
+  height: 7px;
+  opacity: 0.42;
+}
+
+.anomaly-result-details {
+  flex: 1;
+  padding: 20px;
+  border-top: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.anomaly-result-title {
+  margin: 0 0 16px;
+  color: #1e293b;
+  font-size: 0.98rem;
+  font-weight: 750;
+}
+
+.anomaly-result-list {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+}
+
+.anomaly-result-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.anomaly-result-row dt {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.anomaly-result-row dd {
+  min-width: 0;
+  margin: 0;
+  color: #0f172a;
+  font-size: 0.88rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.anomaly-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  line-height: 1.25;
+}
+
+.anomaly-label--isolation-forest {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.anomaly-label--lof {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.anomaly-popup-explanation {
+  align-self: start;
+  padding: 24px;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(186, 230, 253, 0.6),
+      transparent 48%
+    ),
+    #f8fafc;
+}
+
+.anomaly-popup-explanation h3 {
+  margin: 0 0 16px;
+  color: #0f172a;
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.anomaly-popup-explanation p {
+  margin: 0 0 14px;
+  color: #475569;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.anomaly-popup-explanation p:last-child {
+  margin-bottom: 0;
+}
+
+.anomaly-popup-explanation strong {
+  color: #1e293b;
+}
+
+@keyframes anomaly-popup-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.975);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes anomaly-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes anomaly-particle-float {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translate3d(0, 5px, 0) scale(0.82);
+  }
+
+  45% {
+    opacity: 0.9;
+    transform: translate3d(5px, -10px, 0) scale(1.05);
+  }
+
+  70% {
+    opacity: 0.65;
+    transform: translate3d(-4px, -17px, 0) scale(0.92);
+  }
+}
+
+@keyframes anomaly-bar-shimmer {
+  0%,
+  62% {
+    transform: translateX(-130%);
+  }
+
+  82%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+@media (max-width: 800px) {
+  .anomaly-popup-backdrop {
+    align-items: flex-start;
+    padding: 18px;
+    overflow-y: auto;
+  }
+
+  .anomaly-popup {
+    max-height: none;
+  }
+
+  .anomaly-popup-header {
+    padding: 24px 22px 18px;
+  }
+
+  .anomaly-popup-divider {
+    margin: 0 22px;
+  }
+
+  .anomaly-popup-content {
+    grid-template-columns: 1fr;
+    padding: 24px 22px 28px;
+  }
+
+  .anomaly-popup-explanation {
+    order: -1;
+  }
+}
+
+@media (max-width: 540px) {
+  .anomaly-popup-backdrop {
+    padding: 10px;
+  }
+
+  .anomaly-popup {
+    border-radius: 16px;
+  }
+
+  .anomaly-popup-results {
+    grid-template-columns: 1fr;
+  }
+
+  .anomaly-chart-column {
+    min-height: 300px;
+  }
+
+  .anomaly-chart-track {
+    height: 205px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anomaly-popup-backdrop,
+  .anomaly-popup,
+  .anomaly-chart-fill,
+  .anomaly-chart-fill::before,
+  .anomaly-particle {
+    animation: none;
+    transition: none;
+  }
+}
