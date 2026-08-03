@@ -64,3 +64,21 @@ async function fetchFromApi(): Promise<PointData[]> {
 export async function fetchAudioData(datasetId: string): Promise<PointData[]> {
   return DATA_SOURCE === "api" ? fetchFromApi() : fetchFromJson(datasetId);
 }
+
+// Labels a sample with a category via the backend.
+export async function createLabeledSample(
+  uuid: string,
+  category: string,
+): Promise<void> {
+  const res = await fetch(`${API_BASE_URL}/api/v1/sounds/labeled-samples`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ uuid, category }),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(
+      `Failed to label sample "${uuid}": HTTP ${res.status}${detail ? ` – ${detail}` : ""}`,
+    );
+  }
+}
