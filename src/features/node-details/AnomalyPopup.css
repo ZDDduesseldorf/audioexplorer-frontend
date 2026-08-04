@@ -1,52 +1,75 @@
+/* ── Popup overlay ───────────────────────────────────────── */
 .anomaly-popup-backdrop {
+  --popup-orange: var(--color-orange, #ff8400);
+  --popup-vista-blue: var(--color-light-blue, #8fa0d8);
+  --popup-cream: var(--color-cream, #f9dfc6);
+  --popup-dark-blue: var(--color-dark-blue, #0b0829);
+
   position: fixed;
   inset: 0;
   z-index: 1000;
+
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 32px;
-  background: rgba(15, 23, 42, 0.54);
-  backdrop-filter: blur(4px);
+  justify-content: flex-start;
+
+  /*
+   * Keeps the 300px NodeDetails sidebar visible on desktop while the popup
+   * occupies the main content area.
+   */
+  box-sizing: border-box;
+  padding: 28px 336px 28px 20px;
+
+  background: rgba(11, 8, 41, 0.14);
   animation: anomaly-backdrop-enter 180ms ease-out;
 }
 
+/* ── Popup container ─────────────────────────────────────── */
 .anomaly-popup {
-  width: min(920px, 100%);
-  max-height: calc(100vh - 64px);
+  width: min(1040px, 100%);
+  max-height: calc(100vh - 40px);
+  box-sizing: border-box;
+  overflow-x: hidden;
   overflow-y: auto;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 22px;
-  background: #ffffff;
-  box-shadow:
-    0 28px 70px rgba(15, 23, 42, 0.28),
-    0 8px 24px rgba(15, 23, 42, 0.16);
+
+  border: 2px solid var(--popup-vista-blue);
+  border-radius: 16px;
+
+  background: var(--popup-dark-blue);
+  color: var(--popup-cream);
+
+  box-shadow: 0 18px 48px rgba(11, 8, 41, 0.42);
+
+  font-family: inherit;
+
   animation: anomaly-popup-enter 220ms ease-out;
+
+  scrollbar-color: var(--popup-vista-blue) var(--popup-dark-blue);
 }
 
+/* ── Popup header ────────────────────────────────────────── */
 .anomaly-popup-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  padding: 28px 32px 22px;
+
+  padding: 38px 32px 18px 72px;
 }
 
 .anomaly-popup-eyebrow {
-  margin: 0 0 6px;
-  color: #64748b;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  display: none;
 }
 
 .anomaly-popup-title {
   margin: 0;
-  color: #0f172a;
-  font-size: clamp(1.55rem, 3vw, 2rem);
-  font-weight: 750;
-  line-height: 1.2;
+
+  color: var(--popup-cream);
+
+  font-family: inherit;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
 }
 
 .anomaly-popup-close {
@@ -54,15 +77,22 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border: 0;
+
+  width: 42px;
+  height: 42px;
+
+  border: 3px solid var(--popup-orange);
   border-radius: 50%;
-  background: #f1f5f9;
-  color: #334155;
+
+  background: transparent;
+  color: var(--popup-vista-blue);
+
   font: inherit;
-  font-size: 1rem;
+  font-size: 1.25rem;
+  line-height: 1;
+
   cursor: pointer;
+
   transition:
     background-color 160ms ease,
     color 160ms ease,
@@ -70,160 +100,207 @@
 }
 
 .anomaly-popup-close:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: var(--popup-orange);
+  color: var(--popup-dark-blue);
   transform: scale(1.05);
 }
 
 .anomaly-popup-close:focus-visible {
-  outline: 3px solid rgba(56, 189, 248, 0.4);
+  outline: 3px solid var(--popup-cream);
   outline-offset: 3px;
 }
 
 .anomaly-popup-divider {
   height: 1px;
-  margin: 0 32px;
-  background: #e2e8f0;
+  margin: 0 42px 0 72px;
+
+  background: var(--popup-vista-blue);
+  opacity: 0.9;
 }
 
+/* ── Popup layout ────────────────────────────────────────── */
 .anomaly-popup-content {
   display: grid;
-  grid-template-columns: minmax(0, 1.65fr) minmax(250px, 0.8fr);
-  gap: 30px;
-  padding: 30px 32px 34px;
+  grid-template-columns: minmax(430px, 1.15fr) minmax(300px, 0.85fr);
+  align-items: start;
+  gap: 42px;
+
+  padding: 28px 42px 34px 72px;
 }
 
+/*
+ * The existing React structure contains one article per algorithm.
+ * display: contents allows both chart columns to share one visual chart panel,
+ * while the corresponding result details remain in separate cards below.
+ */
 .anomaly-popup-results {
+  position: relative;
+
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-rows: 270px auto;
+  gap: 12px 16px;
+
   min-width: 0;
 }
 
+/* Creates the shared chart container*/
+.anomaly-popup-results::before {
+  grid-column: 1 / -1;
+  grid-row: 1;
+
+  border: 3px solid var(--popup-vista-blue);
+  border-radius: 16px;
+
+  background: var(--popup-dark-blue);
+
+  content: "";
+}
+
+/* Removes the previous individual outer cards without changing the markup. */
 .anomaly-result {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  display: contents;
 }
 
-.anomaly-result--isolation-forest {
-  border-top: 4px solid #f59e0b;
-}
-
-.anomaly-result--lof {
-  border-top: 4px solid #0ea5e9;
-}
-
+/* ── Shared bar chart ────────────────────────────────────── */
 .anomaly-chart-column {
+  position: relative;
+  z-index: 1;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 330px;
-  padding: 24px 20px 20px;
+  justify-content: flex-end;
+
+  min-width: 0;
+  min-height: 0;
+  padding: 28px 30px 8px;
+}
+
+.anomaly-result--isolation-forest .anomaly-chart-column {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.anomaly-result--lof .anomaly-chart-column {
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .anomaly-chart-track {
   position: relative;
+
   display: flex;
   align-items: flex-end;
-  width: min(112px, 60%);
-  height: 230px;
+
+  width: 46px;
+  height: 210px;
+
   overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  border-radius: 18px 18px 8px 8px;
-  background:
-    linear-gradient(to top, rgba(148, 163, 184, 0.11) 1px, transparent 1px),
-    #f1f5f9;
-  background-size: 100% 25%;
-  box-shadow: inset 0 0 20px rgba(15, 23, 42, 0.04);
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+  box-shadow: none;
 }
 
 .anomaly-chart-fill {
   position: relative;
+
   width: 100%;
   min-height: 0;
+
   overflow: hidden;
-  border-radius: 16px 16px 6px 6px;
+
+  border-radius: 0;
+
   transition: height 700ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: height;
 }
 
+/* Keeps the smooth light movement inside both bars. */
 .anomaly-chart-fill::before {
   position: absolute;
   inset: 0;
-  content: "";
+
   background: linear-gradient(
     100deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.35),
-    rgba(255, 255, 255, 0.06)
+    transparent,
+    rgba(249, 223, 198, 0.3),
+    transparent
   );
+
+  content: "";
+
   transform: translateX(-130%);
   animation: anomaly-bar-shimmer 5s ease-in-out infinite;
 }
 
 .anomaly-chart-fill--isolation-forest {
-  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 55%, #d97706 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 -8px 20px rgba(245, 158, 11, 0.22);
+  border: 1px solid var(--popup-orange);
+  background: var(--popup-cream);
 }
 
 .anomaly-chart-fill--lof {
-  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 55%, #0369a1 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    0 -8px 20px rgba(14, 165, 233, 0.22);
+  border: 1px solid var(--popup-cream);
+  background: var(--popup-orange);
 }
 
-.anomaly-chart-value {
-  margin-top: 18px;
-  color: #0f172a;
-  font-size: 1.4rem;
-  font-weight: 750;
-  line-height: 1;
-}
-
+/*
+ * The score and algorithm name are already shown in the result cards below,
+ * so they remain hidden inside the shared chart panel.
+ */
+.anomaly-chart-value,
 .anomaly-chart-name {
-  margin-top: 8px;
-  color: #64748b;
-  font-size: 0.82rem;
-  font-weight: 650;
-  line-height: 1.35;
-  text-align: center;
+  display: none;
 }
 
+/* ── Pixel particle animation ────────────────────────────── */
 .anomaly-particles {
   position: absolute;
   inset: 0;
+
   overflow: hidden;
+
   pointer-events: none;
 }
 
 .anomaly-particle {
   position: absolute;
+
   width: 5px;
   height: 5px;
-  border-radius: 50%;
-  background: #bae6fd;
-  box-shadow:
-    0 0 5px rgba(186, 230, 253, 0.95),
-    0 0 10px rgba(125, 211, 252, 0.7);
+
+  border-radius: 1px;
+
   opacity: 0.76;
+
   animation-name: anomaly-particle-float;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
+/* Orange pixels provide contrast inside the cream Isolation Forest bar. */
+.anomaly-chart-fill--isolation-forest .anomaly-particle {
+  background: var(--popup-orange);
+  box-shadow:
+    0 0 4px rgba(255, 132, 0, 0.9),
+    0 0 8px rgba(255, 132, 0, 0.55);
+}
+
+/* Cream pixels provide contrast inside the orange LOF bar. */
+.anomaly-chart-fill--lof .anomaly-particle {
+  background: var(--popup-cream);
+  box-shadow:
+    0 0 4px rgba(249, 223, 198, 0.95),
+    0 0 8px rgba(249, 223, 198, 0.62);
+}
+
 .anomaly-particle:nth-child(3n) {
   width: 3px;
   height: 3px;
-  opacity: 0.6;
+  opacity: 0.58;
 }
 
 .anomaly-particle:nth-child(4n) {
@@ -232,93 +309,133 @@
   opacity: 0.42;
 }
 
+/* ── Result cards below the shared chart ─────────────────── */
 .anomaly-result-details {
-  flex: 1;
-  padding: 20px;
-  border-top: 1px solid #e2e8f0;
-  background: rgba(255, 255, 255, 0.72);
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 14px 16px 15px;
+
+  border: 3px solid var(--popup-vista-blue);
+  border-radius: 16px;
+
+  background: var(--popup-dark-blue);
+  color: var(--popup-cream);
+}
+
+.anomaly-result--isolation-forest .anomaly-result-details {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.anomaly-result--lof .anomaly-result-details {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .anomaly-result-title {
-  margin: 0 0 16px;
-  color: #1e293b;
-  font-size: 0.98rem;
-  font-weight: 750;
+  margin: 0 0 12px;
+
+  color: var(--popup-cream);
+
+  font-family: inherit;
+  font-size: 1.04rem;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .anomaly-result-list {
   display: grid;
-  gap: 13px;
+  gap: 9px;
+
   margin: 0;
 }
 
 .anomaly-result-row {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 }
 
 .anomaly-result-row dt {
-  color: #64748b;
-  font-size: 0.8rem;
-  font-weight: 650;
+  color: var(--popup-cream);
+
+  font-size: 0.86rem;
+  font-weight: 700;
 }
 
 .anomaly-result-row dd {
   min-width: 0;
   margin: 0;
-  color: #0f172a;
-  font-size: 0.88rem;
-  font-weight: 650;
+
+  color: var(--popup-cream);
+
+  font-size: 0.86rem;
+  font-weight: 700;
+
   overflow-wrap: anywhere;
 }
 
 .anomaly-label {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  line-height: 1.25;
+  justify-content: center;
+
+  min-height: 26px;
+  box-sizing: border-box;
+  padding: 4px 10px;
+
+  border: 2px solid;
+  border-radius: 8px;
+
+  background: transparent;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .anomaly-label--isolation-forest {
-  background: #fef3c7;
-  color: #92400e;
+  border-color: var(--popup-orange);
+  color: var(--popup-cream);
 }
 
 .anomaly-label--lof {
-  background: #e0f2fe;
-  color: #075985;
+  border-color: var(--popup-vista-blue);
+  color: var(--popup-cream);
 }
 
+/* ── Explanation column ──────────────────────────────────── */
 .anomaly-popup-explanation {
   align-self: start;
-  padding: 24px;
-  border: 1px solid #dbeafe;
-  border-radius: 18px;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(186, 230, 253, 0.6),
-      transparent 48%
-    ),
-    #f8fafc;
+
+  padding: 8px 0 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+  color: var(--popup-cream);
 }
 
 .anomaly-popup-explanation h3 {
-  margin: 0 0 16px;
-  color: #0f172a;
-  font-size: 1.05rem;
-  font-weight: 750;
+  margin: 0 0 18px;
+
+  color: var(--popup-cream);
+
+  font-family: inherit;
+  font-size: 1.12rem;
+  font-weight: 700;
 }
 
 .anomaly-popup-explanation p {
-  margin: 0 0 14px;
-  color: #475569;
+  margin: 0 0 16px;
+
+  color: var(--popup-cream);
+
+  font-family: inherit;
   font-size: 0.88rem;
-  line-height: 1.65;
+  line-height: 1.45;
 }
 
 .anomaly-popup-explanation p:last-child {
@@ -326,9 +443,11 @@
 }
 
 .anomaly-popup-explanation strong {
-  color: #1e293b;
+  color: var(--popup-cream);
+  font-weight: 700;
 }
 
+/* ── Entry and bar animations ────────────────────────────── */
 @keyframes anomaly-popup-enter {
   from {
     opacity: 0;
@@ -381,57 +500,116 @@
   }
 }
 
-@media (max-width: 800px) {
+/*
+ * Below this width there is not enough space to reserve the desktop sidebar.
+ * The popup then uses the complete viewport width.
+ */
+@media (max-width: 1120px) {
   .anomaly-popup-backdrop {
-    align-items: flex-start;
-    padding: 18px;
-    overflow-y: auto;
+    justify-content: center;
+    padding: 22px;
   }
 
   .anomaly-popup {
-    max-height: none;
+    width: min(920px, 100%);
   }
 
   .anomaly-popup-header {
-    padding: 24px 22px 18px;
+    padding: 34px 30px 22px;
   }
 
   .anomaly-popup-divider {
-    margin: 0 22px;
+    margin: 0 30px;
   }
 
   .anomaly-popup-content {
     grid-template-columns: 1fr;
-    padding: 24px 22px 28px;
+    gap: 34px;
+    padding: 30px;
   }
 
   .anomaly-popup-explanation {
-    order: -1;
+    padding-top: 0;
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 640px) {
   .anomaly-popup-backdrop {
+    align-items: flex-start;
     padding: 10px;
+    overflow-y: auto;
   }
 
   .anomaly-popup {
-    border-radius: 16px;
+    width: 100%;
+    max-height: none;
+    border-radius: 14px;
+  }
+
+  .anomaly-popup-header {
+    padding: 24px 20px 18px;
+  }
+
+  .anomaly-popup-title {
+    font-size: 1.75rem;
+  }
+
+  .anomaly-popup-close {
+    width: 36px;
+    height: 36px;
+  }
+
+  .anomaly-popup-divider {
+    margin: 0 20px;
+  }
+
+  .anomaly-popup-content {
+    padding: 24px 20px 28px;
   }
 
   .anomaly-popup-results {
     grid-template-columns: 1fr;
+    grid-template-rows: 280px auto auto;
   }
 
-  .anomaly-chart-column {
-    min-height: 300px;
+  .anomaly-popup-results::before {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .anomaly-result--isolation-forest .anomaly-chart-column,
+  .anomaly-result--lof .anomaly-chart-column {
+    grid-row: 1;
+  }
+
+  .anomaly-result--isolation-forest .anomaly-chart-column {
+    grid-column: 1;
+    align-items: flex-start;
+    padding-left: 28%;
+  }
+
+  .anomaly-result--lof .anomaly-chart-column {
+    grid-column: 1;
+    align-items: flex-end;
+    padding-right: 28%;
+  }
+
+  .anomaly-result--isolation-forest .anomaly-result-details {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .anomaly-result--lof .anomaly-result-details {
+    grid-column: 1;
+    grid-row: 3;
   }
 
   .anomaly-chart-track {
-    height: 205px;
+    height: 220px;
   }
 }
 
+/* Disables non-essential motion when reduced motion is requested. */
 @media (prefers-reduced-motion: reduce) {
   .anomaly-popup-backdrop,
   .anomaly-popup,

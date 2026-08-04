@@ -21,8 +21,8 @@ interface AnomalyValueButtonProps {
 }
 
 // Formats the backend anomaly score
-function formatAnomalyValue(value: number | null): string {
-  return value === null ? "—" : `${value}%`;
+function formatAnomalyValue(value: number | null | undefined): string {
+  return value == null || !Number.isFinite(value) ? "—" : `${value}%`;
 }
 
 // Renders the anomaly score button and its hover tooltip.

@@ -10,7 +10,6 @@ const API_BASE_URL = "";
 
 /**
  * Shape of a point in the optional static frontend JSON file.
- *
  */
 interface RawPoint {
   id: string | number;
@@ -46,7 +45,7 @@ interface SoundOverview {
   umap_z: number;
   label: string;
   category: string;
-  original_filename: string;
+  filename: string;
   source: string;
   additional_information: Record<string, string>;
 
@@ -127,7 +126,7 @@ async function fetchFromApi(): Promise<PointData[]> {
 
     label: point.label,
     category: point.category,
-    filename: point.original_filename,
+    filename: point.filename,
 
     nearestNeighbors: point.nearest_neighbors ?? {},
 
@@ -156,8 +155,10 @@ export async function createLabeledSample(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ uuid, category }),
   });
+
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
+
     throw new Error(
       `Failed to label sample "${uuid}": HTTP ${res.status}${detail ? ` – ${detail}` : ""}`,
     );

@@ -19,9 +19,9 @@ interface AnomalyBarProps {
 // Defines how many animated particles are rendered inside each anomaly bar.
 const PARTICLE_COUNT = 14;
 
-// Formats the backend anomaly score without changing or rounding its value.
-function formatAnomalyValue(value: number | null): string {
-  return value === null ? "—" : `${value}%`;
+// Formats the backend anomaly score.
+function formatAnomalyValue(value: number | null | undefined): string {
+  return value == null || !Number.isFinite(value) ? "—" : `${value}%`;
 }
 
 /**
