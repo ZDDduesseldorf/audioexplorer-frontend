@@ -1,0 +1,70 @@
+.audio-player-panel {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 320px;
+    background: #181b22;
+    border: 1px solid rgba(255, 122, 0, 0.3);
+    border-radius: 12px;
+    padding: 14px;
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #8fa0d8;
+    margin-bottom: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+.track-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 10px 0;
+    color: #ff7a00;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.play-btn {
+    background: #ff7a00;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.audio-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #ff7a00;
+    transition: width 0.1s linear;
+}

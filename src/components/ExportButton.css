@@ -1,0 +1,26 @@
+.export-csv-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(143, 160, 216, 0.3);
+    color: var(--text-color, #fff);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    margin-top: 12px;
+}
+
+.export-csv-btn:hover:not(:disabled) {
+    border-color: #ff7a00;
+    color: #ff7a00;
+}
+
+.export-csv-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
