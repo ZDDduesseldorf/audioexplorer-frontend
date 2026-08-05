@@ -57,8 +57,7 @@ async function fetchFromJson(datasetId: string): Promise<PointData[]> {
     // Ensure that static data also matches the complete PointData shape.
     anomalie_isolation_forest: p.anomalie_isolation_forest ?? null,
     anomalie_lof: p.anomalie_lof ?? null,
-    anomalie_isolation_forest_label:
-      p.anomalie_isolation_forest_label ?? null,
+    anomalie_isolation_forest_label: p.anomalie_isolation_forest_label ?? null,
     anomalie_lof_label: p.anomalie_lof_label ?? null,
   }));
 }
