@@ -34,6 +34,9 @@ interface AppState extends FilterState {
   // --- Data ---
   points: PointData[]; // full set, as loaded from the API
   filteredPoints: PointData[]; // derived: points minus active filters
+  // Number of distinct clusters in `points`, used to scale the color
+  // gradient consistently regardless of active filters.
+  clusterCount: number;
   setPoints: (points: PointData[]) => void;
 
   // --- Selection ---
@@ -75,10 +78,12 @@ export const useAppStore = create<AppState>((set) => ({
   // Data
   points: [],
   filteredPoints: [],
+  clusterCount: 0,
   setPoints: (points) =>
     set((state) => ({
       points,
       filteredPoints: applyFilters(points, state),
+      clusterCount: points.reduce((max, p) => Math.max(max, p.cluster + 1), 0),
     })),
 
   // Selection

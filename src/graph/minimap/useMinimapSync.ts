@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import type { PointData } from "../../domain/types";
 import { getClusterColor } from "../../domain/clusters";
 import type { GraphEngine } from "../engine/GraphEngine";
+import { useAppStore } from "../../store/useAppStore";
 
 const MINIMAP_MAX_SIDE = 180;
 const MINIMAP_PAD = 8;
@@ -52,6 +53,7 @@ export function useMinimapSync(
 ) {
   const geoRef = useRef<MinimapGeometry | null>(null);
   const offscreenRef = useRef<HTMLCanvasElement | null>(null);
+  const clusterCount = useAppStore((s) => s.clusterCount);
 
   // Rebuild offscreen canvas when points change
   useEffect(() => {
@@ -81,12 +83,12 @@ export function useMinimapSync(
 
     for (const p of points) {
       const { x, y } = gToM(p.x, p.y);
-      octx.fillStyle = getClusterColor(p.cluster);
+      octx.fillStyle = getClusterColor(p.cluster, clusterCount);
       octx.beginPath();
       octx.arc(x, y, dotRadius, 0, Math.PI * 2);
       octx.fill();
     }
-  }, [canvasRef, points]);
+  }, [canvasRef, points, clusterCount]);
 
   // Draw viewport rect on every afterRender
   useEffect(() => {
