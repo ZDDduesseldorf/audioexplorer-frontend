@@ -33,6 +33,7 @@
   border-radius: 0 12px 12px 0;
   color: var(--color-cream);
   font-size: 20px;
+  line-height: 1;
   cursor: pointer;
   transition:
     background 0.15s,
@@ -44,6 +45,17 @@
   background: var(--color-orange);
   border-color: var(--color-orange);
   color: var(--color-dark-blue);
+}
+
+.filter-open-btn-arrow {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  /* Optically centers the chevron's point (rotation shifts its bounding box). */
+  margin-left: -3px;
 }
 
 .filter-section {
