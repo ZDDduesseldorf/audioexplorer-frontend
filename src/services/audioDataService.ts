@@ -1,43 +1,26 @@
 import type { PointData } from "../domain/types";
 
-// Switch the data source here:
-// "api" loads data from the backend.
-// "json" loads data from a static frontend JSON file.
+// Switch the data source here: "api" loads from the backend,
+// "json" uses the static JSON file.
 const DATA_SOURCE: "api" | "json" = "api";
 
-// An empty base URL uses the Vite development proxy.
+// Empty string uses the Vite dev proxy (/api -> localhost:8000).
 const API_BASE_URL = "";
 
-/**
- * Shape of a point in the optional static frontend JSON file.
- */
 interface RawPoint {
   id: string | number;
   x: number;
   y: number;
-  z?: number;
   cluster: number;
   label: string;
-  category?: string;
-  filename?: string;
-  nearestNeighbors?: Record<string, number>;
 
+  // Static JSON files use the normalized frontend field names.
   anomalie_isolation_forest?: number | null;
   anomalie_lof?: number | null;
   anomalie_isolation_forest_label?: string | null;
   anomalie_lof_label?: string | null;
 }
 
-/**
- * Exact response shape of GET /api/v1/sounds/overviews.
- *
- * The backend API uses uppercase `LOF` in these field names:
- * - anomalie_LOF
- * - anomalie_LOF_label
- *
- * They are normalized once in fetchFromApi() so that the rest of the
- * frontend only works with the lowercase PointData field names.
- */
 interface SoundOverview {
   uuid: string;
   umap_x: number;
@@ -46,98 +29,70 @@ interface SoundOverview {
   label: string;
   category: string;
   filename: string;
-  source: string;
-  additional_information: Record<string, string>;
-
-  anomalie_isolation_forest: number;
-  anomalie_LOF: number;
-
-  anomalie_isolation_forest_label: string;
-  anomalie_LOF_label: string;
-
+  anomalie: boolean | null;
   nearest_neighbors: Record<string, number>;
+
+  // Anomaly fields returned by the backend.
+  anomalie_isolation_forest: number | null;
+  anomalie_LOF: number | null;
+  anomalie_isolation_forest_label: string | null;
+  anomalie_LOF_label: string | null;
 }
 
-/**
- * Loads the optional static frontend dataset.
- *
- * Missing anomaly values and labels are converted to null so every returned
- * point has the complete PointData shape.
- */
 async function fetchFromJson(datasetId: string): Promise<PointData[]> {
-  const response = await fetch(`/${datasetId}.json`);
+  const res = await fetch(`/${datasetId}.json`);
 
-  if (!response.ok) {
+  if (!res.ok) {
     throw new Error(
-      `Failed to load dataset "${datasetId}": HTTP ${response.status}`,
+      `Failed to load dataset "${datasetId}": HTTP ${res.status}`,
     );
   }
 
-  const raw = (await response.json()) as {
-    points: RawPoint[];
-  };
+  const raw = await res.json();
 
-  return raw.points.map((point): PointData => ({
-    ...point,
-    id: String(point.id),
+  return (raw.points as RawPoint[]).map((p) => ({
+    ...p,
+    id: String(p.id),
 
-    anomalie_isolation_forest: point.anomalie_isolation_forest ?? null,
-
-    anomalie_lof: point.anomalie_lof ?? null,
-
+    // Ensure that static data also matches the complete PointData shape.
+    anomalie_isolation_forest: p.anomalie_isolation_forest ?? null,
+    anomalie_lof: p.anomalie_lof ?? null,
     anomalie_isolation_forest_label:
-      point.anomalie_isolation_forest_label ?? null,
-
-    anomalie_lof_label: point.anomalie_lof_label ?? null,
+      p.anomalie_isolation_forest_label ?? null,
+    anomalie_lof_label: p.anomalie_lof_label ?? null,
   }));
 }
 
-/**
- * Loads sound overviews from the backend and converts the API response into
- * the single PointData shape used throughout the frontend.
- */
 async function fetchFromApi(): Promise<PointData[]> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/sounds/overviews`);
+  const res = await fetch(`${API_BASE_URL}/api/v1/sounds/overviews`);
 
-  if (!response.ok) {
-    throw new Error(`Failed to load sound overviews: HTTP ${response.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to load sound overviews: HTTP ${res.status}`);
   }
 
-  const raw = (await response.json()) as SoundOverview[];
+  const raw = (await res.json()) as SoundOverview[];
 
-  // Creates a stable numeric cluster index for every category.
-  const categories = [...new Set(raw.map((point) => point.category))].sort(
-    (firstCategory, secondCategory) =>
-      firstCategory.localeCompare(secondCategory),
-  );
+  // Stable numeric cluster index per category, used for coloring.
+  const categories = [...new Set(raw.map((p) => p.category))].sort();
+  const clusterByCategory = new Map(categories.map((c, i) => [c, i]));
 
-  const clusterByCategory = new Map(
-    categories.map((category, index) => [category, index]),
-  );
+  return raw.map((p) => ({
+    id: p.uuid,
+    x: p.umap_x,
+    y: p.umap_y,
+    z: p.umap_z,
+    cluster: clusterByCategory.get(p.category) ?? 0,
+    label: p.label,
+    category: p.category,
+    filename: p.filename,
+    anomalie: p.anomalie,
+    nearestNeighbors: p.nearest_neighbors,
 
-  return raw.map((point): PointData => ({
-    id: point.uuid,
-
-    x: Number(point.umap_x),
-    y: Number(point.umap_y),
-    z: Number(point.umap_z),
-
-    cluster: clusterByCategory.get(point.category) ?? 0,
-
-    label: point.label,
-    category: point.category,
-    filename: point.filename,
-
-    nearestNeighbors: point.nearest_neighbors ?? {},
-
-    // The Isolation Forest names already match the frontend shape.
-    anomalie_isolation_forest: point.anomalie_isolation_forest,
-
-    anomalie_isolation_forest_label: point.anomalie_isolation_forest_label,
-
-    // Normalize the backend's uppercase LOF names once at the fetch boundary.
-    anomalie_lof: point.anomalie_LOF,
-    anomalie_lof_label: point.anomalie_LOF_label,
+    // Normalize the backend field names once at the API boundary.
+    anomalie_isolation_forest: p.anomalie_isolation_forest,
+    anomalie_lof: p.anomalie_LOF,
+    anomalie_isolation_forest_label: p.anomalie_isolation_forest_label,
+    anomalie_lof_label: p.anomalie_LOF_label,
   }));
 }
 
