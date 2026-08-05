@@ -12,6 +12,7 @@ interface CategoryInfo {
 export function FilterSidebar() {
   const {
     points,
+    clusterCount,
     showCategorized,
     showUncategorized,
     toggleCategorized,
@@ -41,14 +42,14 @@ export function FilterSidebar() {
       .map((name) => ({
         name,
         count: counts.get(name)!,
-        color: getClusterColor(clusters.get(name)!),
+        color: getClusterColor(clusters.get(name)!, clusterCount),
       }));
     return {
       categories,
       categorizedCount: points.length - uncategorizedCount,
       uncategorizedCount,
     };
-  }, [points]);
+  }, [points, clusterCount]);
 
   const searchedCategories = categories.filter((c) =>
     c.name.toLowerCase().includes(categorySearch.trim().toLowerCase()),

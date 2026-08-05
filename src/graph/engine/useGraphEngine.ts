@@ -6,6 +6,7 @@ import { getClusterColor } from "../../domain/clusters";
 import type { GraphEngine } from "./GraphEngine";
 import { SigmaEngineAdapter } from "./SigmaEngineAdapter";
 import { playAudioByUuid, stopAudio } from "../../services/audioPlayerService";
+import { useAppStore } from "../../store/useAppStore";
 
 interface GraphEngineCallbacks {
   onNodeClick?: (node: PointData) => void;
@@ -34,6 +35,7 @@ export function useGraphEngine(
   isHoverAudioEnabled: boolean,
   callbacks: GraphEngineCallbacks,
 ): GraphEngine | null {
+  const clusterCount = useAppStore((s) => s.clusterCount);
   const [engine, setEngine] = useState<GraphEngine | null>(null);
   // Mirrors `engine`, but updated synchronously so effects running in the
   // same commit (e.g. when points and selectedId change together) never
@@ -91,7 +93,7 @@ export function useGraphEngine(
       graph.addNode(p.id, {
         x: p.x,
         y: p.y,
-        color: getClusterColor(p.cluster),
+        color: getClusterColor(p.cluster, clusterCount),
         label: p.label,
       });
     }
