@@ -216,3 +216,28 @@ git push --set-upstream origin <branch-name>
 ```
 
 6. Create a pull request describing the implemented changes.
+
+Recent Frontend Enhancements
+
+Developed by Shermineh Shasti
+
+Significant improvements have been implemented in the frontend to enhance data management, user experience, and visualization accuracy.
+1. Core Features
+
+   Anomaly Detection: Designed and implemented the AnomalyPopup panel to visualize statistical analysis results (Isolation Forest and Local Outlier Factor) alongside score distributions.
+
+   Bulk Data Management (BulkActionBar): Added "Select All", "Delete All", and "Export CSV" functionalities with real-time synchronization via useAppStore.
+
+   Advanced Audio Metadata Panel: Created AdvancedAudioMetadataPanel to display precise technical data (sampling rate, exact duration), waveform visualization, and quick metadata copying.
+
+   Interactive Controls: Introduced control sliders for dynamic node scaling and advanced graph navigation tools.
+
+2. UI/UX & Visual Improvements
+
+   Color & Cluster Engineering: Refactored clusters.ts and expanded the color palette from 8 to 43 distinct colors, dramatically improving graph readability and aesthetics.
+
+   Loading Experience: Implemented a dedicated LoadingScreen with an integrated audio wave animation for professional handling of large datasets.
+
+   UI Layout: Completely redesigned the Header, Footer, and AboutPage alongside adding a Dark/Light mode toggle.
+
+   Explorer Mode: Optimized for user focus on the audio map with improved selection-clearing logic and hover-playback.
