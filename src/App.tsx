@@ -72,7 +72,7 @@ export default function App() {
               onClick={() => setFilterSidebarOpen(true)}
               aria-label="Show filter sidebar"
             >
-              <span className="filter-open-btn-arrow" aria-hidden="true" />
+              →
             </button>
           )}
 

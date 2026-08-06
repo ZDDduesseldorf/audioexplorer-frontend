@@ -9,6 +9,7 @@ export interface PointData {
   z?: number;
   category?: string;
   filename?: string;
+  dataSource?: string | null;
 
   // Neighbor id -> distance, precomputed by the backend.
   nearestNeighbors?: Record<string, number>;

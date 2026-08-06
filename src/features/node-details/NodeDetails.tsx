@@ -96,8 +96,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   const currentCategory = isCategorized ? nodeCategory : "Uncategorized";
 
   const sampleDetails = {
-    description: "Giggle",
-    dataSource: "DS xy",
+    description: node.label?.trim() || "No description available",
+    dataSource: node.dataSource?.trim() || "Unknown source",
   };
 
   // Stores the selected category suggestion through the backend.
@@ -182,7 +182,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
                 <td>{sampleDetails.description}</td>
               </tr>
 
-              <tr className="interactive-detail-row">
+              <tr>
                 <th scope="row">Data source</th>
                 <td>{sampleDetails.dataSource}</td>
               </tr>
