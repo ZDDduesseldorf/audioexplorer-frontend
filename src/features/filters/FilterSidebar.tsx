@@ -162,7 +162,9 @@ export function FilterSidebar() {
                     </span>
 
                     <div className="filter-option-controls">
-                      <span className="filter-count">{count.toLocaleString()}</span>
+                      <span className="filter-count">
+                        {count.toLocaleString()}
+                      </span>
 
                       <input
                         className="filter-checkbox"
