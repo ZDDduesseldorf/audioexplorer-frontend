@@ -1,18 +1,9 @@
 import { useEffect, useRef } from "react";
+import { nearestNeighborIds } from "../../domain/neighbors";
 import type { PointData } from "../../domain/types";
 import type { GraphEngine } from "../engine/GraphEngine";
 
 const KNN_K = 10;
-
-// The k nearest neighbor ids of a point, taken from the
-// backend-precomputed id -> distance map.
-function nearestNeighborIds(point: PointData, k: number): string[] {
-  if (!point.nearestNeighbors) return [];
-  return Object.entries(point.nearestNeighbors)
-    .sort(([, a], [, b]) => a - b)
-    .slice(0, k)
-    .map(([id]) => id);
-}
 
 function drawNeighborLines(
   ctx: CanvasRenderingContext2D,
