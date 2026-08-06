@@ -90,6 +90,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
 
   // Requests the audio file from the backend.
   const audioUrl = getAudioByUuid(nodeId);
+  //filename
+  const filename = node.filename?.trim() || "Unknown filename";
 
   // Uses the category status provided by the backend.
   const isCategorized = !isUncategorized(node);
@@ -167,6 +169,11 @@ export function NodeDetails({ node }: NodeDetailsProps) {
 
         <div className="audio-player">
           <AudioWaveform key={nodeId} audioUrl={audioUrl} />
+        </div>
+
+        <div className="sample-filename" title={filename}>
+          <span className="sample-filename-label">Filename:</span>
+          <span className="sample-filename-value">{filename}</span>
         </div>
 
         <div className="sample-details">
