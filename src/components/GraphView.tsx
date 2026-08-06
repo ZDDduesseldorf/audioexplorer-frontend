@@ -24,6 +24,7 @@ export function GraphView({
     nodeSize,
     select,
     clearSelection,
+    focusRequest,
   } = useAppStore();
 
   const isHoverAudioEnabled = isExplorerMode;
@@ -80,6 +81,15 @@ export function GraphView({
       onSelectedTooltipChange: handleSelectedTooltipChange,
     },
   );
+
+  // Pans the camera to the point requested by the store (e.g. after
+  // jumping to the next uncategorized sample), so it's visible even if it
+  // landed outside the current viewport.
+  useEffect(() => {
+    if (!engine || !focusRequest) return;
+    const point = points.find((p) => p.id === focusRequest.id);
+    if (point) engine.panTo(point.x, point.y);
+  }, [focusRequest, engine, points]);
 
   return (
     <div className="sigma-container" style={{ position: "relative" }}>

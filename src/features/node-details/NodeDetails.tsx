@@ -46,6 +46,7 @@ function AnomalyValueButton({ algorithmName, value }: AnomalyValueButtonProps) {
 
 export function NodeDetails({ node }: NodeDetailsProps) {
   const clearSelection = useAppStore((s) => s.clearSelection);
+  const selectNextUncategorized = useAppStore((s) => s.selectNextUncategorized);
   const points = useAppStore((state) => state.points);
 
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -55,6 +56,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const [savedCategory, setSavedCategory] = useState<string | null>(null);
+  const [nextError, setNextError] = useState<string | null>(null);
 
   // Creates a list of all categories returned by the backend.
   const categories = useMemo(() => {
@@ -79,6 +81,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     setSelectedCategory(node?.category?.trim() ?? "");
     setSaveError(null);
     setSavedCategory(null);
+    setNextError(null);
   }, [node?.id, node?.category]);
 
   if (!node) {
@@ -128,16 +131,17 @@ export function NodeDetails({ node }: NodeDetailsProps) {
       });
   }
 
-  // Keeps the existing placeholder behavior for selecting the next sample.
+  // Jumps to the closest still-uncategorized sample so labeling can
+  // continue without hunting for the next point on the map.
   function handleNext() {
-    console.log("Dummy next sample");
+    setNextError(
+      selectNextUncategorized() ? null : "No further uncategorized samples.",
+    );
   }
 
   // Opens the anomaly popup for the currently selected sample.
   function openAnomalyPopup() {
     setAnomalyPopupOpen(true);
-
-    // TODO: Select the next sample.
   }
 
   // Closes the anomaly popup without closing the sidebar.
@@ -260,6 +264,8 @@ export function NodeDetails({ node }: NodeDetailsProps) {
             </select>
 
             {saveError && <p className="annotation-error">{saveError}</p>}
+
+            {nextError && <p className="annotation-error">{nextError}</p>}
 
             {savedCategory && (
               <div className="annotation-success" role="status">

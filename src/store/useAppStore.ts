@@ -1,12 +1,9 @@
 import { create } from "zustand";
+import { isUncategorized } from "../domain/category";
+import { findNearestUncategorized } from "../domain/neighbors";
 import type { PointData } from "../domain/types";
 
-export const UNKNOWN_CATEGORY = "unknown";
-
-// Points with category "unknown" (or none at all) count as uncategorized.
-export function isUncategorized(point: PointData): boolean {
-  return point.category == null || point.category === UNKNOWN_CATEGORY;
-}
+export { UNKNOWN_CATEGORY, isUncategorized } from "../domain/category";
 
 interface FilterState {
   showCategorized: boolean;
@@ -43,6 +40,15 @@ interface AppState extends FilterState {
   selectedId: string | null;
   select: (id: string) => void;
   clearSelection: () => void;
+  // Ids visited during the current "Next" chain, so it doesn't bounce
+  // back and forth between the same two uncategorized samples.
+  visitedIds: ReadonlySet<string>;
+  // Set whenever selection changes programmatically (e.g. via "Next") to
+  // ask the graph view to pan the camera to the newly selected point.
+  focusRequest: { id: string } | null;
+  // Selects the closest still-uncategorized point to the current selection.
+  // Returns false (and leaves the selection untouched) if none is found.
+  selectNextUncategorized: () => boolean;
 
   // --- Graph display ---
   nodeSize: number;
@@ -68,13 +74,20 @@ function withFilters(state: AppState, changes: Partial<FilterState>) {
     ...changes,
   };
   const filteredPoints = applyFilters(state.points, filters);
-  const selectedId = filteredPoints.some((p) => p.id === state.selectedId)
-    ? state.selectedId
-    : null;
-  return { ...filters, filteredPoints, selectedId };
+  const stillVisible = filteredPoints.some((p) => p.id === state.selectedId);
+  const selectedId = stillVisible ? state.selectedId : null;
+  return stillVisible
+    ? { ...filters, filteredPoints, selectedId }
+    : {
+        ...filters,
+        filteredPoints,
+        selectedId,
+        visitedIds: new Set<string>(),
+        focusRequest: null,
+      };
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   // Data
   points: [],
   filteredPoints: [],
@@ -88,8 +101,36 @@ export const useAppStore = create<AppState>((set) => ({
 
   // Selection
   selectedId: null,
-  select: (id) => set({ selectedId: id }),
-  clearSelection: () => set({ selectedId: null }),
+  // A manual pick on the map starts a fresh "Next" chain.
+  select: (id) =>
+    set({ selectedId: id, visitedIds: new Set(), focusRequest: null }),
+  clearSelection: () =>
+    set({ selectedId: null, visitedIds: new Set(), focusRequest: null }),
+  visitedIds: new Set<string>(),
+  focusRequest: null,
+  selectNextUncategorized: () => {
+    const state = get();
+    const current = state.points.find((p) => p.id === state.selectedId);
+    if (!current) return false;
+
+    const visited = new Set(state.visitedIds);
+    visited.add(current.id);
+
+    const next = findNearestUncategorized(
+      state.filteredPoints,
+      current,
+      visited,
+    );
+    if (!next) return false;
+
+    visited.add(next.id);
+    set({
+      selectedId: next.id,
+      visitedIds: visited,
+      focusRequest: { id: next.id },
+    });
+    return true;
+  },
 
   // Graph display
   nodeSize: 1.3,
