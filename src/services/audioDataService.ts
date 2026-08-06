@@ -13,6 +13,12 @@ interface RawPoint {
   y: number;
   cluster: number;
   label: string;
+
+  // Static JSON files use the normalized frontend field names.
+  anomalie_isolation_forest?: number | null;
+  anomalie_lof?: number | null;
+  anomalie_isolation_forest_label?: string | null;
+  anomalie_lof_label?: string | null;
 }
 
 interface SoundOverview {
@@ -25,22 +31,44 @@ interface SoundOverview {
   filename: string;
   anomalie: boolean | null;
   nearest_neighbors: Record<string, number>;
+
+  // Anomaly fields returned by the backend.
+  anomalie_isolation_forest: number | null;
+  anomalie_LOF: number | null;
+  anomalie_isolation_forest_label: string | null;
+  anomalie_LOF_label: string | null;
 }
 
 async function fetchFromJson(datasetId: string): Promise<PointData[]> {
   const res = await fetch(`/${datasetId}.json`);
-  if (!res.ok)
+
+  if (!res.ok) {
     throw new Error(
       `Failed to load dataset "${datasetId}": HTTP ${res.status}`,
     );
+  }
+
   const raw = await res.json();
-  return (raw.points as RawPoint[]).map((p) => ({ ...p, id: String(p.id) }));
+
+  return (raw.points as RawPoint[]).map((p) => ({
+    ...p,
+    id: String(p.id),
+
+    // Ensure that static data also matches the complete PointData shape.
+    anomalie_isolation_forest: p.anomalie_isolation_forest ?? null,
+    anomalie_lof: p.anomalie_lof ?? null,
+    anomalie_isolation_forest_label: p.anomalie_isolation_forest_label ?? null,
+    anomalie_lof_label: p.anomalie_lof_label ?? null,
+  }));
 }
 
 async function fetchFromApi(): Promise<PointData[]> {
   const res = await fetch(`${API_BASE_URL}/api/v1/sounds/overviews`);
-  if (!res.ok)
+
+  if (!res.ok) {
     throw new Error(`Failed to load sound overviews: HTTP ${res.status}`);
+  }
+
   const raw = (await res.json()) as SoundOverview[];
 
   // Stable numeric cluster index per category, used for coloring.
@@ -58,6 +86,12 @@ async function fetchFromApi(): Promise<PointData[]> {
     filename: p.filename,
     anomalie: p.anomalie,
     nearestNeighbors: p.nearest_neighbors,
+
+    // Normalize the backend field names once at the API boundary.
+    anomalie_isolation_forest: p.anomalie_isolation_forest,
+    anomalie_lof: p.anomalie_LOF,
+    anomalie_isolation_forest_label: p.anomalie_isolation_forest_label,
+    anomalie_lof_label: p.anomalie_LOF_label,
   }));
 }
 
@@ -75,8 +109,10 @@ export async function createLabeledSample(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ uuid, category }),
   });
+
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
+
     throw new Error(
       `Failed to label sample "${uuid}": HTTP ${res.status}${detail ? ` – ${detail}` : ""}`,
     );
