@@ -46,9 +46,7 @@ function AnomalyValueButton({ algorithmName, value }: AnomalyValueButtonProps) {
 
 export function NodeDetails({ node }: NodeDetailsProps) {
   const clearSelection = useAppStore((s) => s.clearSelection);
-  const selectNextUncategorized = useAppStore(
-    (s) => s.selectNextUncategorized,
-  );
+  const selectNextUncategorized = useAppStore((s) => s.selectNextUncategorized);
   const points = useAppStore((state) => state.points);
 
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -137,9 +135,7 @@ export function NodeDetails({ node }: NodeDetailsProps) {
   // continue without hunting for the next point on the map.
   function handleNext() {
     setNextError(
-      selectNextUncategorized()
-        ? null
-        : "No further uncategorized samples.",
+      selectNextUncategorized() ? null : "No further uncategorized samples.",
     );
   }
 
