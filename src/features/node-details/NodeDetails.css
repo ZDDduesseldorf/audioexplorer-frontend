@@ -20,6 +20,29 @@
   flex-shrink: 0;
 }
 
+.sample-filename {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 4px;
+  margin: 6px 10px 12px;
+  color: var(--color-light-blue);
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.sample-filename-label {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sample-filename-value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .details-table {
   width: 100%;
   border-collapse: collapse;

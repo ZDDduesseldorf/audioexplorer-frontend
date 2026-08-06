@@ -29,8 +29,9 @@ interface SoundOverview {
   label: string;
   category: string;
   filename: string;
-  anomalie: boolean | null;
   nearest_neighbors: Record<string, number>;
+  original_filename: string;
+  source: string | null;
 
   // Anomaly fields returned by the backend.
   anomalie_isolation_forest: number | null;
@@ -83,8 +84,8 @@ async function fetchFromApi(): Promise<PointData[]> {
     cluster: clusterByCategory.get(p.category) ?? 0,
     label: p.label,
     category: p.category,
-    filename: p.filename,
-    anomalie: p.anomalie,
+    filename: p.original_filename,
+    dataSource: p.source ?? null,
     nearestNeighbors: p.nearest_neighbors,
 
     // Normalize the backend field names once at the API boundary.

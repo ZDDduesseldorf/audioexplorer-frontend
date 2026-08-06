@@ -77,7 +77,7 @@ export function FilterSidebar() {
         </button>
       </div>
 
-      <section className="filter-section">
+      <section className="filter-section filter-status-section">
         <label className="filter-option">
           <span className="filter-option-label">Categorized</span>
 
@@ -113,7 +113,7 @@ export function FilterSidebar() {
         </label>
       </section>
 
-      <section className="filter-section">
+      <section className="filter-section filter-category-section">
         <h3 className="filter-section-title">Filter by Category</h3>
 
         <div className="filter-dropdown">
@@ -146,34 +146,36 @@ export function FilterSidebar() {
                 autoFocus
               />
 
-              {searchedCategories.length === 0 && (
-                <span className="filter-dropdown-empty">No matches</span>
-              )}
+              <div className="filter-category-list">
+                {searchedCategories.length === 0 && (
+                  <span className="filter-dropdown-empty">No matches</span>
+                )}
 
-              {searchedCategories.map(({ name, count, color }) => (
-                <label key={name} className="filter-option">
-                  <span className="filter-option-label">
-                    <span
-                      className="filter-category-dot"
-                      style={{ background: color }}
-                    />
-                    {name}
-                  </span>
-
-                  <div className="filter-option-controls">
-                    <span className="filter-count">
-                      {count.toLocaleString()}
+                {searchedCategories.map(({ name, count, color }) => (
+                  <label key={name} className="filter-option">
+                    <span className="filter-option-label">
+                      <span
+                        className="filter-category-dot"
+                        style={{ background: color }}
+                      />
+                      {name}
                     </span>
 
-                    <input
-                      className="filter-checkbox"
-                      type="checkbox"
-                      checked={!hiddenCategories.has(name)}
-                      onChange={() => toggleCategory(name)}
-                    />
-                  </div>
-                </label>
-              ))}
+                    <div className="filter-option-controls">
+                      <span className="filter-count">
+                        {count.toLocaleString()}
+                      </span>
+
+                      <input
+                        className="filter-checkbox"
+                        type="checkbox"
+                        checked={!hiddenCategories.has(name)}
+                        onChange={() => toggleCategory(name)}
+                      />
+                    </div>
+                  </label>
+                ))}
+              </div>
             </div>
           )}
         </div>
