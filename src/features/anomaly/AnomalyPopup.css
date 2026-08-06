@@ -1,0 +1,197 @@
+.anomaly-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(7, 5, 26, 0.75);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.anomaly-popup {
+    background: var(--color-dark-blue);
+    border: 1px solid rgba(143, 160, 216, 0.2);
+    border-radius: 16px;
+    width: 680px;
+    max-width: 95vw;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+}
+
+.anomaly-popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(143, 160, 216, 0.2);
+}
+
+.anomaly-popup-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-cream);
+}
+
+.anomaly-close-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: none;
+    border: 1.5px solid var(--color-light-blue);
+    color: var(--color-light-blue);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.anomaly-close-btn:hover {
+    border-color: var(--color-orange);
+    color: var(--color-orange);
+}
+
+.anomaly-popup-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 16px 20px;
+}
+
+.anomaly-chart-section {
+    background: rgba(143, 160, 216, 0.05);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.anomaly-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-light-blue);
+    opacity: 0.7;
+    margin-bottom: 10px;
+}
+
+.anomaly-bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 110px;
+    padding-top: 8px;
+}
+
+.anomaly-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+}
+
+.anomaly-bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    min-height: 4px;
+    transition: height 0.4s ease;
+}
+
+.anomaly-bar-label {
+    font-size: 9px;
+    color: var(--color-light-blue);
+    opacity: 0.5;
+}
+
+.anomaly-desc-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.anomaly-desc-text {
+    font-size: 11px;
+    color: var(--color-cream);
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.anomaly-score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.anomaly-score-card {
+    background: rgba(143, 160, 216, 0.06);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.anomaly-score-title {
+    font-size: 10px;
+    color: var(--color-light-blue);
+    opacity: 0.6;
+}
+
+.anomaly-label-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    width: fit-content;
+}
+
+.anomaly-label-badge.iso {
+    background: rgba(155, 89, 182, 0.15);
+    color: #9b59b6;
+}
+
+.anomaly-label-badge.lof {
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+}
+
+.anomaly-score-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-cream);
+}
+
+.anomaly-score-sub {
+    font-size: 10px;
+    color: var(--color-light-blue);
+    font-weight: 400;
+}
+
+.anomaly-popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid rgba(143, 160, 216, 0.2);
+    background: rgba(143, 160, 216, 0.03);
+}
+
+.anomaly-popup-meta {
+    font-size: 11px;
+    color: var(--color-light-blue);
+    opacity: 0.6;
+}
+
+.anomaly-confirm-btn {
+    padding: 6px 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--color-orange);
+    color: var(--color-dark-blue);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.anomaly-confirm-btn:hover { background: #e07010; }

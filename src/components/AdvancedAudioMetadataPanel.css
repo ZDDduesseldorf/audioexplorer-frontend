@@ -1,0 +1,83 @@
+audio-meta-panel {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 340px;
+    background: #121218;
+    border: 1px solid rgba(255, 122, 0, 0.4);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    color: #fff;
+    font-family: inherit;
+}
+
+.audio-meta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+}
+
+.audio-meta-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #ff7a00;
+}
+
+.audio-meta-close {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.audio-meta-close:hover {
+    color: #fff;
+}
+
+.audio-meta-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.meta-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.meta-label {
+    color: #888;
+}
+
+.meta-value {
+    color: #ddd;
+    font-weight: 500;
+}
+
+.waveform-preview-container {
+    margin-top: 8px;
+}
+
+.waveform-bars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.waveform-bar {
+    flex: 1;
+    background: #ff7a00;
+    border-radius: 2px;
+    opacity: 0.8;
+}

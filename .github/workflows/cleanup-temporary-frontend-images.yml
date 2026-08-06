@@ -1,0 +1,60 @@
+name: Cleanup Temporary Frontend Images
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup-temporary-frontend-images:
+    name: Cleanup Temporary Frontend Images
+    runs-on: ubuntu-latest
+
+    env:
+      PACKAGE_NAME: audioexplorer-frontend-manual
+
+    steps:
+      - name: Delete temporary frontend image package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          OWNER="${GITHUB_REPOSITORY_OWNER}"
+
+          OWNER_TYPE="$(gh api "/users/${OWNER}" --jq '.type')"
+
+          if [ "$OWNER_TYPE" = "Organization" ]; then
+            PACKAGE_ROOT_API="/orgs/${OWNER}/packages/container/${PACKAGE_NAME}"
+          else
+            PACKAGE_ROOT_API="/users/${OWNER}/packages/container/${PACKAGE_NAME}"
+          fi
+
+          echo "Package root API: $PACKAGE_ROOT_API"
+          echo "Checking temporary frontend package: $PACKAGE_NAME"
+
+          set +e
+          gh api "$PACKAGE_ROOT_API" > package.json 2> package_error.log
+          PACKAGE_STATUS=$?
+          set -e
+
+          if [ "$PACKAGE_STATUS" -ne 0 ]; then
+            if grep -q "HTTP 404" package_error.log; then
+              echo "Temporary frontend package does not exist. Nothing to delete."
+              exit 0
+            fi
+
+            cat package_error.log
+            exit 1
+          fi
+
+          echo "Temporary frontend package exists."
+          echo "Deleting temporary frontend package: $PACKAGE_NAME"
+
+          gh api --method DELETE "$PACKAGE_ROOT_API"
+
+          echo "Temporary frontend package deleted successfully."

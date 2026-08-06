@@ -1,0 +1,32 @@
+.export-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-btn {
+  padding: 5px 14px;
+  background: none;
+  border: 1.5px solid var(--color-orange);
+  color: var(--color-orange);
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: var(--color-orange);
+  color: var(--color-dark-blue);
+}
+
+.export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.export-error {
+  font-size: 10px;
+  color: #e74c3c;
+}

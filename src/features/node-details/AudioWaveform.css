@@ -1,0 +1,75 @@
+.audio-player {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  min-height: 38px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  margin: 14px 14px 16px;
+  padding: 4px 9px 4px 5px;
+  overflow: hidden;
+  background: var(--color-cream);
+  border-radius: 999px;
+}
+
+.audio-button {
+  width: 30px;
+  height: 30px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: var(--color-dark-blue);
+  color: var(--color-light-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.wavesurfer-container {
+  width: 100%;
+  height: 30px;
+  overflow: hidden;
+}
+
+.audio-button:hover {
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
+.audio-button:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+.audio-time {
+  font-size: 12px;
+  color: var(--color-dark-blue);
+  min-width: 40px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.audio-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 30px;
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+}
+
+@media (max-height: 760px) {
+  .audio-player {
+    margin-top: 12px;
+    margin-bottom: 14px;
+  }
+}
