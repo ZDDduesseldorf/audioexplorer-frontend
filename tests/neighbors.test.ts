@@ -32,19 +32,19 @@ describe("findNearestUncategorized", () => {
     expect(result?.id).toBe("near");
   });
 
-  it("ignores categorized points, including those explicitly labeled unknown", () => {
+  it("ignores categorized points but still considers ones explicitly labeled unknown", () => {
     const origin = point("origin", 0, 0);
     const categorized = point("categorized", 1, 1, "speech");
-    const unknown = point("unknown", 1, 1, "unknown");
+    const explicitlyUnknown = point("explicitly-unknown", 1, 1, "unknown");
     const uncategorized = point("uncategorized", 2, 2);
 
     const result = findNearestUncategorized(
-      [origin, categorized, unknown, uncategorized],
+      [origin, categorized, explicitlyUnknown, uncategorized],
       origin,
       new Set(),
     );
 
-    expect(result?.id).toBe("uncategorized");
+    expect(result?.id).toBe("explicitly-unknown");
   });
 
   it("skips ids in excludeIds", () => {
