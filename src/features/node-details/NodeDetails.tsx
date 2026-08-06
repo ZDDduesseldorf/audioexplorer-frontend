@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import type { PointData } from "../../domain/types";
-import { createLabeledSample } from "../../services/audioDataService";
+import {
+  createLabeledSample,
+  downloadLabeledSamplesCsv,
+} from "../../services/audioDataService";
 import { getAudioByUuid } from "../../services/audioPlayerService";
 import {
   isUncategorized,
@@ -51,6 +54,9 @@ export function NodeDetails({ node }: NodeDetailsProps) {
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isAnomalyPopupOpen, setAnomalyPopupOpen] = useState(false);
+
+  const [isDownloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const [isSaving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -137,6 +143,13 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     setNextError(
       selectNextUncategorized() ? null : "No further uncategorized samples.",
     );
+  }
+
+  // Downloads all saved label proposals as a CSV file.
+  function handleCsvDownload() {
+    downloadLabeledSamplesCsv().catch((error: unknown) => {
+      console.error("CSV could not be downloaded", error);
+    });
   }
 
   // Opens the anomaly popup for the currently selected sample.
@@ -295,6 +308,15 @@ export function NodeDetails({ node }: NodeDetailsProps) {
             </div>
           </div>
         )}
+        <div className="csv-export-section">
+          <button
+            type="button"
+            className="csv-export-btn"
+            onClick={handleCsvDownload}
+          >
+            Download CSV
+          </button>
+        </div>
       </div>
 
       <AnomalyPopup

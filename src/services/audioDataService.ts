@@ -119,3 +119,27 @@ export async function createLabeledSample(
     );
   }
 }
+
+// Downloads all saved label proposals as a CSV file
+export async function downloadLabeledSamplesCsv(): Promise<void> {
+  const res = await fetch(
+    `${API_BASE_URL}/api/v1/sounds/labeled-samples/export`,
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to download labeled samples: HTTP ${res.status}`);
+  }
+
+  const csvBlob = await res.blob();
+  const downloadUrl = URL.createObjectURL(csvBlob);
+
+  const downloadLink = document.createElement("a");
+  downloadLink.href = downloadUrl;
+  downloadLink.download = "category_annotations.csv";
+
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+
+  URL.revokeObjectURL(downloadUrl);
+}

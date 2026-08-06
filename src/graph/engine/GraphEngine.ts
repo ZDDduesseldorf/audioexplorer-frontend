@@ -11,7 +11,11 @@ export interface ViewportBounds {
 }
 
 export type GraphEventType =
-  "afterRender" | "enterNode" | "leaveNode" | "clickNode" | "clickStage";
+  | "afterRender"
+  | "enterNode"
+  | "leaveNode"
+  | "clickNode"
+  | "clickStage";
 
 export interface NodeEventPayload {
   nodeId: string;
