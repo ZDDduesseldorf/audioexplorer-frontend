@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import type { PointData } from "../../domain/types";
-import { createLabeledSample } from "../../services/audioDataService";
+import {
+  createLabeledSample,
+  downloadLabeledSamplesCsv,
+} from "../../services/audioDataService";
 import { getAudioByUuid } from "../../services/audioPlayerService";
 import {
   isUncategorized,
@@ -51,6 +54,9 @@ export function NodeDetails({ node }: NodeDetailsProps) {
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isAnomalyPopupOpen, setAnomalyPopupOpen] = useState(false);
+
+  const [isDownloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const [isSaving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -137,6 +143,20 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     setNextError(
       selectNextUncategorized() ? null : "No further uncategorized samples.",
     );
+  }
+
+  // Downloads all saved label annotations as a CSV file.
+  async function handleCsvDownload() {
+    setDownloading(true);
+    setDownloadError(null);
+
+    try {
+      await downloadLabeledSamplesCsv();
+    } catch (error: unknown) {
+      setDownloadError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setDownloading(false);
+    }
   }
 
   // Opens the anomaly popup for the currently selected sample.
@@ -293,10 +313,26 @@ export function NodeDetails({ node }: NodeDetailsProps) {
                 Next <span aria-hidden="true">▶</span>
               </button>
             </div>
+
+            <div className="csv-export-section">
+              {downloadError && (
+                <p className="annotation-error" role="alert">
+                  {downloadError}
+                </p>
+              )}
+
+              <button
+                type="button"
+                className="csv-export-btn"
+                onClick={handleCsvDownload}
+                disabled={isDownloading}
+              >
+                {isDownloading ? "Downloading…" : "Download CSV"}
+              </button>
+            </div>
           </div>
         )}
       </div>
-
       <AnomalyPopup
         node={node}
         isOpen={isAnomalyPopupOpen}
