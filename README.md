@@ -39,7 +39,8 @@ Users can:
 - view the waveform of the selected audio
 - filter categorized and uncategorized samples
 - filter individual categories
-- categorize audio samples
+- submit category annotations for uncategorized audio samples
+- export saved label annotations as a CSV file
 - access project information on the About page
 
 ## Developer Documentation
@@ -159,6 +160,12 @@ Audio playback is divided into two components.
 - `audioPlayerService.ts` provides shared playback functionality for graph interactions such as Explorer Mode.
 
 ---
+
+### Annotation and CSV Export
+
+`NodeDetails.tsx` allows users to submit category annotations for uncategorized audio samples.
+
+The annotations are sent to the backend through `audioDataService.ts`. Saved annotations can also be downloaded as a CSV file.
 
 ### General Components
 

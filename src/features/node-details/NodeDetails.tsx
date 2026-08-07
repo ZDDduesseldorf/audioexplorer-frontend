@@ -145,11 +145,18 @@ export function NodeDetails({ node }: NodeDetailsProps) {
     );
   }
 
-  // Downloads all saved label proposals as a CSV file.
-  function handleCsvDownload() {
-    downloadLabeledSamplesCsv().catch((error: unknown) => {
-      console.error("CSV could not be downloaded", error);
-    });
+  // Downloads all saved label annotations as a CSV file.
+  async function handleCsvDownload() {
+    setDownloading(true);
+    setDownloadError(null);
+
+    try {
+      await downloadLabeledSamplesCsv();
+    } catch (error: unknown) {
+      setDownloadError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setDownloading(false);
+    }
   }
 
   // Opens the anomaly popup for the currently selected sample.
@@ -306,19 +313,26 @@ export function NodeDetails({ node }: NodeDetailsProps) {
                 Next <span aria-hidden="true">▶</span>
               </button>
             </div>
+
+            <div className="csv-export-section">
+              {downloadError && (
+                <p className="annotation-error" role="alert">
+                  {downloadError}
+                </p>
+              )}
+
+              <button
+                type="button"
+                className="csv-export-btn"
+                onClick={handleCsvDownload}
+                disabled={isDownloading}
+              >
+                {isDownloading ? "Downloading…" : "Download CSV"}
+              </button>
+            </div>
           </div>
         )}
-        <div className="csv-export-section">
-          <button
-            type="button"
-            className="csv-export-btn"
-            onClick={handleCsvDownload}
-          >
-            Download CSV
-          </button>
-        </div>
       </div>
-
       <AnomalyPopup
         node={node}
         isOpen={isAnomalyPopupOpen}
